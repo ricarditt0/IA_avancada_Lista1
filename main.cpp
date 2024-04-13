@@ -29,9 +29,16 @@ int main(int argc, char *argv[])
     string algorithm = argv[1];
 
     readInputs(inputs,argc,argv);
+    vector<Nodo> sucessores;
 
     if(!(algorithm.compare("-bfs"))){
         cout << "bfs" << endl;
+        Nodo n1(inputs[0],NULL,"",0);
+            n1.printEstado();
+        n1.expande(sucessores);
+        for(int j = 0; j < sucessores.size();j++){
+            sucessores[j].printEstado();
+        }
     }
     else if(!(algorithm.compare("-astar"))){
         cout << "astar" << endl;
@@ -48,11 +55,15 @@ int main(int argc, char *argv[])
     else
         cout << "algoritmo errado" << endl;
 
-    
 
-    Nodo n1(inputs[0],NULL,"",0);
-    for(int i = 0 ; i < size(n1.estado);i++){
-        cout << n1.estado[i] << " ";
-    }
+    // Nodo n1(inputs[0],NULL,"",0);
+    // for(int i = 0 ; i < size(inputs[0]);i++){
+    //     cout << inputs[0][i] << " ";
+    // }
+    // cout << endl;
+
+    // for(int i = 0 ; i < size(n1.estado);i++){
+    //     cout << n1.estado[i] << " ";
+    // }
 
 }
