@@ -11,11 +11,45 @@ class Nodo
     std::string acao;
     int custo;
 
+    Nodo(){}
+
     Nodo(const std::vector<int>& estado, Nodo* pai, const std::string& acao, int custo)
         : estado(estado), pai(pai), acao(acao), custo(custo) {}
 
     int distanceManhatan(){
         return 0;
+    }
+
+    struct hash {
+        size_t operator()(const Nodo& nodo) const {
+            size_t hashValue = 0;
+            std::string s;
+            for (int elem : nodo.estado) {
+                s = s + std::to_string(elem);
+            }
+            hashValue = stoi(s);
+            return hashValue;
+        }
+    };
+
+    bool operator == (const Nodo &A)const
+    {
+        for(int i = 0;i<this->estado.size();i++){
+            if(this->estado[i] != A.estado[i]){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool e_Solucao()
+    {
+        for(int i = 0;i<this->estado.size();i++){
+            if(this->estado[i] != i){
+                return false;
+            }
+        }
+        return true;
     }
 
     std::vector<int> swap(std::vector<int> estado , int index_alvo, int index_vazio)
@@ -29,25 +63,39 @@ class Nodo
     void expande(std::vector<Nodo>& sucessores)
     {
         int i = 0;
+        int custo = 0;
         while (this->estado[i] != 0)
             i ++;
-        if(i != 0 && i != 1 && i != 2){
+
+        if(i != 0 && i != 1 && i != 2 && this->acao.compare("baixo")){
             sucessores.push_back(Nodo(swap(this->estado,i-3,i),this,"cima",0));
         }
-        if(i != 0 && i != 3 && i != 6){
+
+        if(i != 0 && i != 3 && i != 6 && this->acao.compare("direita")){
             sucessores.push_back(Nodo(swap(this->estado,i-1,i),this,"esquerda",0));
         }
-        if(i != 2 && i != 5 && i != 8){
+
+        if(i != 2 && i != 5 && i != 8 && this->acao.compare("esquerda")){
             sucessores.push_back(Nodo(swap(this->estado,i+1,i),this,"direita",0));
         }
-        if(i != 6 && i != 7 && i != 8){
-            sucessores.push_back(Nodo(swap(this->estado,i+3,i),this,"baixo",0));
+
+        if(i != 6 && i != 7 && i != 8 && this->acao.compare("cima")){
+            sucessores.push_back(Nodo(swap(this->estado,i+3,i),this,"baixo",0)); 
         }
     }
 
-    void printEstado()
+    void caminho(std::vector<std::string> &caminho){
+        std::cout<< this->acao << std::endl;
+        if(this->pai){
+            this->pai->caminho(caminho);
+            caminho.push_back(this->acao);
+        }
+    }
+
+    void printEstado() const
     {
         int sizeP = this->estado.size();
+        std::cout << this->acao << std::endl;
         if(sizeP == 9){
             for(int i = 0; i < 9; i++){
                     std::cout << this->estado[i] << " ";
