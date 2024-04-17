@@ -27,49 +27,69 @@ void readInputs(vector<vector<int>>& inputs ,int argc ,char* argv[])
     inputs.push_back(input);
 }
 
+int bfs(vector<int> init_estate,Nodo *solucao)
+{
+    nos_expandidos = 0;
+    unordered_set<string> explorados;
+    queue<Nodo> fronteira;
+    Nodo* sucessores[4];
+    vector<string> caminho;
+
+    Nodo init (init_estate,NULL,"",0);
+
+    if(init.e_Solucao()){
+        init.printEstado();
+        return 1;
+    }
+
+    fronteira.push(init);
+    init.printEstado();
+    explorados.insert(init.convert());
+    while (!fronteira.empty()){
+        Nodo atual = fronteira.front();
+        fronteira.pop();
+        nos_expandidos++;
+        atual.expande(sucessores);
+        for(int i = 0; i<4;i++){
+            
+            if(sucessores[i]){
+
+                if(sucessores[i]->e_Solucao()){
+                    solucao = sucessores[i];
+                    solucao->printEstado();
+                    solucao->caminho(caminho);
+                    return 1;
+                }
+
+                if(!explorados.count(sucessores[i]->convert())){
+                    explorados.insert(sucessores[i]->convert());
+                    fronteira.push(sucessores.front());
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 int main(int argc, char *argv[])
 {
     int stop;
-    unordered_set<Nodo,Nodo::hash> explorados;
-    queue<Nodo> fronteira;
     vector<vector<int>> inputs;
     string algorithm = argv[1];
-    Nodo solucao;
+    Nodo *solucao;
 
     readInputs(inputs,argc,argv);
     vector<Nodo> sucessores;
 
     if(!(algorithm.compare("-bfs"))){
-        nos_expandidos = 0;
         cout << "bfs" << endl;
         Nodo init (inputs[0],NULL,"",0);
 
-        fronteira.push(init);
-
-        while (!fronteira.empty()){
-            Nodo atual = fronteira.front();
-            explorados.insert(atual);
-            atual.printEstado();
-            //cin >> stop;
-            fronteira.pop();
-            if(atual.e_Solucao()){
-                solucao = atual;
-                break;
-            }
-            atual.expande(sucessores);
-
-            for(int i = 0; i<sucessores.size();i++){
-                if(!explorados.count(sucessores.front())){
-                    nos_expandidos++;
-                    fronteira.push(sucessores.front());
-                }
-                sucessores.erase(sucessores.begin());
-            }
-        }
-        cout<< nos_expandidos << endl;
         vector<string> caminho;
-        //solucao.caminho(caminho);
-        //cout << caminho.size();
+        cout<< bfs(inputs[0],solucao) << endl;
+        cout << nos_expandidos<< endl;
+        cout << caminho.size();
+
         // for (int i = 0 ; i<caminho.size();i++){
         //     cout << caminho[i] << " ";
         // }

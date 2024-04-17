@@ -20,26 +20,13 @@ class Nodo
         return 0;
     }
 
-    struct hash {
-        size_t operator()(const Nodo& nodo) const {
-            size_t hashValue = 0;
-            std::string s;
-            for (int elem : nodo.estado) {
+    std::string convert()
+    {
+        std::string s;
+        for (int elem : this->estado) {
                 s = s + std::to_string(elem);
             }
-            hashValue = stoi(s);
-            return hashValue;
-        }
-    };
-
-    bool operator == (const Nodo &A)const
-    {
-        for(int i = 0;i<this->estado.size();i++){
-            if(this->estado[i] != A.estado[i]){
-                return false;
-            }
-        }
-        return true;
+        return s;
     }
 
     bool e_Solucao()
@@ -68,27 +55,27 @@ class Nodo
             i ++;
 
         if(i != 0 && i != 1 && i != 2 && this->acao.compare("baixo")){
-            sucessores.push_back(Nodo(swap(this->estado,i-3,i),this,"cima",0));
+            sucessores.push_back(Nodo(swap(this->estado,i-3,i),pai,"cima",0));
         }
 
         if(i != 0 && i != 3 && i != 6 && this->acao.compare("direita")){
-            sucessores.push_back(Nodo(swap(this->estado,i-1,i),this,"esquerda",0));
+            sucessores.push_back(Nodo(swap(this->estado,i-1,i),pai,"esquerda",0));
         }
 
         if(i != 2 && i != 5 && i != 8 && this->acao.compare("esquerda")){
-            sucessores.push_back(Nodo(swap(this->estado,i+1,i),this,"direita",0));
+            sucessores.push_back(Nodo(swap(this->estado,i+1,i),pai,"direita",0));
         }
 
         if(i != 6 && i != 7 && i != 8 && this->acao.compare("cima")){
-            sucessores.push_back(Nodo(swap(this->estado,i+3,i),this,"baixo",0)); 
+            sucessores.push_back(Nodo(swap(this->estado,i+3,i),pai,"baixo",0)); 
         }
     }
 
     void caminho(std::vector<std::string> &caminho){
         std::cout<< this->acao << std::endl;
         if(this->pai){
-            this->pai->caminho(caminho);
             caminho.push_back(this->acao);
+            this->pai->caminho(caminho);
         }
     }
 
