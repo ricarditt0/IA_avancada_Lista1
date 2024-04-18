@@ -5,11 +5,22 @@
 #include<cstdlib>
 #include<queue>
 #include<unordered_set>
+#include <iomanip>
 #include"Nodo.cpp"
 
 using namespace std;
 
-double nos_expandidos = 0;
+long int nos_expandidos = 0;
+int comprimento_solução = 0;
+double media_heuristica = 0;
+int heuristica_inicial = 0;
+
+void delete_nodos(vector<Nodo*> &nos_alocados)
+{
+    for(int i = 0 ; i < nos_alocados.size(); i++){
+        delete nos_alocados[i];
+    }
+}
 
 void readInputs(vector<vector<int>>& inputs ,int argc ,char* argv[])
 {
@@ -27,48 +38,54 @@ void readInputs(vector<vector<int>>& inputs ,int argc ,char* argv[])
     inputs.push_back(input);
 }
 
-int bfs(vector<int> init_estate,Nodo *solucao)
+void bfs(vector<int> init_estate)
 {
     nos_expandidos = 0;
+    comprimento_solução = 0;
+    media_heuristica = 0;
     unordered_set<string> explorados;
-    queue<Nodo> fronteira;
-    Nodo* sucessores[4];
+    queue<Nodo*> fronteira;
+    vector<Nodo*> sucessores;
+    vector<Nodo*> nos_alocados;
     vector<string> caminho;
+    Nodo* solucao;
+    int comprimento = 0;
 
-    Nodo init (init_estate,NULL,"",0);
+    Nodo *init = new Nodo (init_estate,NULL,"",0);
+    nos_alocados.push_back(init);
+    heuristica_inicial = init->distanceManhatan();
 
-    if(init.e_Solucao()){
-        init.printEstado();
-        return 1;
+    if(init->e_Solucao()){
+        delete init;
+        return ;
     }
 
     fronteira.push(init);
-    init.printEstado();
-    explorados.insert(init.convert());
+    explorados.insert(init->convert());
     while (!fronteira.empty()){
-        Nodo atual = fronteira.front();
+        Nodo *atual = fronteira.front();
         fronteira.pop();
         nos_expandidos++;
-        atual.expande(sucessores);
-        for(int i = 0; i<4;i++){
+        atual->expande(sucessores,atual);
+        for(int i = 0; i<sucessores.size();i++){
             
-            if(sucessores[i]){
-
-                if(sucessores[i]->e_Solucao()){
-                    solucao = sucessores[i];
-                    solucao->printEstado();
-                    solucao->caminho(caminho);
-                    return 1;
-                }
-
-                if(!explorados.count(sucessores[i]->convert())){
-                    explorados.insert(sucessores[i]->convert());
-                    fronteira.push(sucessores.front());
-                }
+            if(sucessores.front()->e_Solucao()){
+                solucao = sucessores.front();
+                solucao->caminho(caminho);
+                comprimento_solução = caminho.size();
+                delete_nodos(nos_alocados);
+                return ;
             }
+
+            if(!explorados.count(sucessores.front()->convert())){
+                nos_alocados.push_back(sucessores.front());
+                explorados.insert(sucessores.front()->convert());
+                fronteira.push(sucessores.front());
+            }
+            sucessores.erase(sucessores.begin());
         }
     }
-    return 0;
+    return ;
 }
 
 int main(int argc, char *argv[])
@@ -76,25 +93,26 @@ int main(int argc, char *argv[])
     int stop;
     vector<vector<int>> inputs;
     string algorithm = argv[1];
-    Nodo *solucao;
+    time_t start, end;
+    double time_taken ;
 
     readInputs(inputs,argc,argv);
     vector<Nodo> sucessores;
 
     if(!(algorithm.compare("-bfs"))){
-        cout << "bfs" << endl;
-        Nodo init (inputs[0],NULL,"",0);
+        for(int i = 0;i<inputs.size();i++){
 
-        vector<string> caminho;
-        cout<< bfs(inputs[0],solucao) << endl;
-        cout << nos_expandidos<< endl;
-        cout << caminho.size();
-
-        // for (int i = 0 ; i<caminho.size();i++){
-        //     cout << caminho[i] << " ";
-        // }
-        // cout << endl;
-
+            time(&start); 
+            ios_base::sync_with_stdio(false); 
+            bfs(inputs[i]);
+            time(&end); 
+            time_taken = double(end - start);
+            cout << nos_expandidos << ',';
+            cout << comprimento_solução << ',';
+            cout << fixed << time_taken <<',' ;
+            cout << media_heuristica << ',';
+            cout << heuristica_inicial << endl;
+        }
 
 
     }

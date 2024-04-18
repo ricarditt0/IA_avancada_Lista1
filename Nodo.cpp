@@ -17,8 +17,18 @@ class Nodo
         : estado(estado), pai(pai), acao(acao), custo(custo) {}
 
     int distanceManhatan(){
-        return 0;
+        int distancia = 0;
+        for (int i = 0; i < 9; ++i) {
+            if (estado[i]) {
+                int val = estado[i];
+                int rowDistance = std::abs((val) % 3 - static_cast<int>(i % 3));
+                int colDistance = std::abs((val) / 3 - static_cast<int>(i / 3));
+                distancia += rowDistance + colDistance;
+            }
+        }
+    	return distancia;
     }
+
 
     std::string convert()
     {
@@ -47,7 +57,7 @@ class Nodo
         return new_estado;
     }
 
-    void expande(std::vector<Nodo>& sucessores)
+    void expande(std::vector<Nodo*>& sucessores,Nodo *pai)
     {
         int i = 0;
         int custo = 0;
@@ -55,24 +65,23 @@ class Nodo
             i ++;
 
         if(i != 0 && i != 1 && i != 2 && this->acao.compare("baixo")){
-            sucessores.push_back(Nodo(swap(this->estado,i-3,i),pai,"cima",0));
+            sucessores.push_back(new Nodo(swap(this->estado,i-3,i),pai,"cima",0));
         }
 
         if(i != 0 && i != 3 && i != 6 && this->acao.compare("direita")){
-            sucessores.push_back(Nodo(swap(this->estado,i-1,i),pai,"esquerda",0));
+            sucessores.push_back(new Nodo(swap(this->estado,i-1,i),pai,"esquerda",0));
         }
 
         if(i != 2 && i != 5 && i != 8 && this->acao.compare("esquerda")){
-            sucessores.push_back(Nodo(swap(this->estado,i+1,i),pai,"direita",0));
+            sucessores.push_back(new Nodo(swap(this->estado,i+1,i),pai,"direita",0));
         }
 
         if(i != 6 && i != 7 && i != 8 && this->acao.compare("cima")){
-            sucessores.push_back(Nodo(swap(this->estado,i+3,i),pai,"baixo",0)); 
+            sucessores.push_back(new Nodo(swap(this->estado,i+3,i),pai,"baixo",0)); 
         }
     }
 
     void caminho(std::vector<std::string> &caminho){
-        std::cout<< this->acao << std::endl;
         if(this->pai){
             caminho.push_back(this->acao);
             this->pai->caminho(caminho);
