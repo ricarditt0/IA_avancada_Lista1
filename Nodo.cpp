@@ -2,18 +2,19 @@
 #include<string>
 #include<iostream>
 
+using namespace std;
 
 class Nodo
 {
     public:
-    std::vector<int> estado;
+    vector<int> estado;
     Nodo* pai;
-    std::string acao;
+    string acao;
     int custo;
 
     Nodo(){}
 
-    Nodo(const std::vector<int>& estado, Nodo* pai, const std::string& acao, int custo)
+    Nodo(const vector<int>& estado, Nodo* pai, const string& acao, int custo)
         : estado(estado), pai(pai), acao(acao), custo(custo) {}
 
     int distanceManhatan(){
@@ -28,9 +29,21 @@ class Nodo
         }
     	return distancia;
     }
+    int distanceManhatan(string num_puzzle){
+        int distancia = 0;
+        for (int i = 0; i < 16; ++i) {
+            if (estado[i]) {
+                int val = estado[i];
+                int rowDistance = std::abs((val) % 4 - static_cast<int>(i % 4));
+                int colDistance = std::abs((val) / 4 - static_cast<int>(i / 4));
+                distancia += rowDistance + colDistance;
+            }
+        }
+    	return distancia;
+    }
 
 
-    std::string convert()
+    string convert()
     {
         std::string s;
         for (int elem : this->estado) {
@@ -49,7 +62,7 @@ class Nodo
         return true;
     }
 
-    std::vector<int> swap(std::vector<int> estado , int index_alvo, int index_vazio)
+    vector<int> swap(vector<int> estado , int index_alvo, int index_vazio)
     {
         std::vector<int> new_estado = estado;
         new_estado[index_vazio] = new_estado[index_alvo];
@@ -57,7 +70,7 @@ class Nodo
         return new_estado;
     }
 
-    void expande(std::vector<Nodo*>& sucessores,Nodo *pai)
+    void expande(vector<Nodo*>& sucessores,Nodo *pai,vector<Nodo*>& nos_alocados)
     {
         int i = 0;
         int custo = 0;
@@ -65,23 +78,54 @@ class Nodo
             i ++;
 
         if(i != 0 && i != 1 && i != 2 && this->acao.compare("baixo")){
-            sucessores.push_back(new Nodo(swap(this->estado,i-3,i),pai,"cima",0));
+            sucessores.push_back(new Nodo(swap(this->estado,i-3,i),pai,"cima",this->custo + 1));
+            nos_alocados.push_back(sucessores.back());
         }
 
         if(i != 0 && i != 3 && i != 6 && this->acao.compare("direita")){
-            sucessores.push_back(new Nodo(swap(this->estado,i-1,i),pai,"esquerda",0));
+            sucessores.push_back(new Nodo(swap(this->estado,i-1,i),pai,"esquerda",this->custo + 1));
+            nos_alocados.push_back(sucessores.back());
         }
 
         if(i != 2 && i != 5 && i != 8 && this->acao.compare("esquerda")){
-            sucessores.push_back(new Nodo(swap(this->estado,i+1,i),pai,"direita",0));
+            sucessores.push_back(new Nodo(swap(this->estado,i+1,i),pai,"direita",this->custo + 1));
+            nos_alocados.push_back(sucessores.back());
         }
 
         if(i != 6 && i != 7 && i != 8 && this->acao.compare("cima")){
-            sucessores.push_back(new Nodo(swap(this->estado,i+3,i),pai,"baixo",0)); 
+            sucessores.push_back(new Nodo(swap(this->estado,i+3,i),pai,"baixo",this->custo + 1));
+            nos_alocados.push_back(sucessores.back()); 
+        }
+    }
+    void expande(vector<Nodo*>& sucessores,Nodo *pai,vector<Nodo*>& nos_alocados,string num_puzzle)
+    {
+        int i = 0;
+        int custo = 0;
+        while (this->estado[i] != 0)
+            i ++;
+
+        if(i != 0 && i != 1 && i != 2 && i != 3 && this->acao.compare("baixo")){
+            sucessores.push_back(new Nodo(swap(this->estado,i-4,i),pai,"cima",this->custo + 1));
+            nos_alocados.push_back(sucessores.back());
+        }
+
+        if(i != 0 && i != 4 && i != 8 && i != 12 && this->acao.compare("direita")){
+            sucessores.push_back(new Nodo(swap(this->estado,i-1,i),pai,"esquerda",this->custo + 1));
+            nos_alocados.push_back(sucessores.back());
+        }
+
+        if(i != 3 && i != 7 && i != 11 && i != 15 && this->acao.compare("esquerda")){
+            sucessores.push_back(new Nodo(swap(this->estado,i+1,i),pai,"direita",this->custo + 1));
+            nos_alocados.push_back(sucessores.back());
+        }
+
+        if(i != 12 && i != 13 && i != 14 && i != 15 && this->acao.compare("cima")){
+            sucessores.push_back(new Nodo(swap(this->estado,i+3,i),pai,"baixo",this->custo + 1));
+            nos_alocados.push_back(sucessores.back()); 
         }
     }
 
-    void caminho(std::vector<std::string> &caminho){
+    void caminho(vector<string> &caminho){
         if(this->pai){
             caminho.push_back(this->acao);
             this->pai->caminho(caminho);
@@ -91,39 +135,60 @@ class Nodo
     void printEstado() const
     {
         int sizeP = this->estado.size();
-        std::cout << this->acao << std::endl;
+        cout << this->acao << endl;
         if(sizeP == 9){
             for(int i = 0; i < 9; i++){
-                    std::cout << this->estado[i] << " ";
+                    cout << this->estado[i] << " ";
                 if(!((i+1)%3))
-                    std::cout << std::endl;
+                    cout << endl;
             }
-            std::cout << std::endl;
+            cout << endl;
+        }
+        else
+        {
+            for(int i = 0; i < 16; i++){
+                    cout << this->estado[i] << " ";
+                if(!((i+1)%4))
+                    cout << endl;
+            }
+            cout << endl;
         }
     }
-
 };
 
+class CompareGBFS {
+    public:
+        bool operator()(Nodo *a, Nodo *b){
+            if(a->distanceManhatan()!= b->distanceManhatan())
+                return a->distanceManhatan() > b->distanceManhatan();
+            if(a->custo != b->custo)
+                return a->custo < b->custo;
+            return true;
+        }
+};
 
+class CompareASTAR{
+    public:
+        bool operator()(Nodo *a,Nodo *b){
+            int f_a = a->custo + a->distanceManhatan();
+            int f_b = b->custo + b->distanceManhatan();
+            if(f_a != f_b)
+                return f_a > f_b;
+            if(a->distanceManhatan()!= b->distanceManhatan())
+                return a->distanceManhatan() > b->distanceManhatan();
+            return false;
+        }
+};
 
-// def distancia_manhattan(estado: str):
-//     string = '12345678'
-//     objetivo = {
-//         "1": (0, 0),
-//         "2": (0, 1),
-//         "3": (0, 2),
-//         "4": (1, 0),
-//         "5": (1, 1),
-//         "6": (1, 2),
-//         "7": (2, 0),
-//         "8": (2, 1)
-//     }
-//     soma = 0
-//     i = 0
-//     while i < len(string):
-//         indice_estado = estado.find(string[i])
-//         pos = objetivo[string[i]]
-//         soma += abs(pos[0] - indice_estado//3) + abs(pos[1] - indice_estado % 3)
-//         i += 1
-    
-//     return soma
+class CompareASTAR16{
+    public:
+        bool operator()(Nodo *a,Nodo *b){
+            int f_a = a->custo + a->distanceManhatan("16");
+            int f_b = b->custo + b->distanceManhatan("16");
+            if(f_a != f_b)
+                return f_a > f_b;
+            if(a->distanceManhatan("16")!= b->distanceManhatan("16"))
+                return a->distanceManhatan("16") > b->distanceManhatan("16");
+            return false;
+        }
+};

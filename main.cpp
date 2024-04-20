@@ -49,7 +49,6 @@ void bfs(vector<int> init_estate)
     vector<Nodo*> nos_alocados;
     vector<string> caminho;
     Nodo* solucao;
-    int comprimento = 0;
 
     Nodo *init = new Nodo (init_estate,NULL,"",0);
     nos_alocados.push_back(init);
@@ -66,9 +65,8 @@ void bfs(vector<int> init_estate)
         Nodo *atual = fronteira.front();
         fronteira.pop();
         nos_expandidos++;
-        atual->expande(sucessores,atual);
-        for(int i = 0; i<sucessores.size();i++){
-            
+        atual->expande(sucessores,atual,nos_alocados);
+        for(int i = 0; i<sucessores.size();i++){ 
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
                 solucao->caminho(caminho);
@@ -78,7 +76,6 @@ void bfs(vector<int> init_estate)
             }
 
             if(!explorados.count(sucessores.front()->convert())){
-                nos_alocados.push_back(sucessores.front());
                 explorados.insert(sucessores.front()->convert());
                 fronteira.push(sucessores.front());
             }
@@ -87,6 +84,175 @@ void bfs(vector<int> init_estate)
     }
     return ;
 }
+
+void gbfs(vector<int> init_estate)
+{
+    nos_expandidos = 0;
+    comprimento_solução = 0;
+    media_heuristica = 0;
+    unordered_set<string> explorados;
+    priority_queue<Nodo*,vector<Nodo*>, CompareGBFS> fronteira;
+    vector<Nodo*> sucessores;
+    vector<Nodo*> nos_alocados;
+    vector<string> caminho;
+    Nodo* solucao;
+
+    int stop = 0;
+
+    Nodo *init = new Nodo (init_estate,NULL,"",0);
+    nos_alocados.push_back(init);
+    heuristica_inicial = init->distanceManhatan();
+
+    if(init->e_Solucao()){
+        delete init;
+        return ;
+    }
+    
+    fronteira.push(init);
+    explorados.insert(init->convert());
+    while(!fronteira.empty()){
+        Nodo *atual = fronteira.top();
+        //cin >> stop;
+        fronteira.pop();
+        //cout << 'p' << atual->distanceManhatan() << " " << atual->custo << endl;
+        //cout << endl;
+        nos_expandidos ++;
+        atual->expande(sucessores,atual,nos_alocados);
+        for(int i = 0; i<sucessores.size();i++){ 
+            if(sucessores.front()->e_Solucao()){
+                solucao = sucessores.front();
+                solucao->caminho(caminho);
+                solucao->printEstado();
+                comprimento_solução = caminho.size();
+                delete_nodos(nos_alocados);
+                media_heuristica = media_heuristica/nos_expandidos;
+                return ;
+            }
+
+            if(!explorados.count(sucessores.front()->convert())){
+                media_heuristica += sucessores.front()->distanceManhatan();
+                explorados.insert(sucessores.front()->convert());
+                //cout << sucessores.front()->distanceManhatan() << " " << sucessores.front()->custo << endl;
+                fronteira.push(sucessores.front());
+            }
+            sucessores.erase(sucessores.begin());
+        }
+    }
+    return ;
+}
+
+void astar(vector<int> init_estate)
+{
+    nos_expandidos = 0;
+    comprimento_solução = 0;
+    media_heuristica = 0;
+    unordered_set<string> explorados;
+    priority_queue<Nodo*,vector<Nodo*>, CompareASTAR> fronteira;
+    vector<Nodo*> sucessores;
+    vector<Nodo*> nos_alocados;
+    vector<string> caminho;
+    Nodo* solucao;
+
+    int stop = 0;
+
+    Nodo *init = new Nodo (init_estate,NULL,"",0);
+    nos_alocados.push_back(init);
+    heuristica_inicial = init->distanceManhatan();
+
+    if(init->e_Solucao()){
+        delete init;
+        return ;
+    }
+    
+    fronteira.push(init);
+    explorados.insert(init->convert());
+    while(!fronteira.empty()){
+        Nodo *atual = fronteira.top();
+        //cin >> stop;
+        fronteira.pop();
+        //cout << 'p' << atual->distanceManhatan() << " " << atual->custo << endl;
+        //cout << endl;
+        nos_expandidos ++;
+        atual->expande(sucessores,atual,nos_alocados);
+        for(int i = 0; i<sucessores.size();i++){ 
+            if(sucessores.front()->e_Solucao()){
+                solucao = sucessores.front();
+                solucao->caminho(caminho);
+                solucao->printEstado();
+                comprimento_solução = caminho.size();
+                delete_nodos(nos_alocados);
+                media_heuristica = media_heuristica/nos_expandidos;
+                return ;
+            }
+
+            if(!explorados.count(sucessores.front()->convert())){
+                media_heuristica += sucessores.front()->distanceManhatan();
+                explorados.insert(sucessores.front()->convert());
+                //cout << sucessores.front()->distanceManhatan() << " " << sucessores.front()->custo << endl;
+                fronteira.push(sucessores.front());
+            }
+            sucessores.erase(sucessores.begin());
+        }
+    }
+    return ;
+}
+
+void astar16(vector<int> init_estate)
+{
+    nos_expandidos = 0;
+    comprimento_solução = 0;
+    media_heuristica = 0;
+    unordered_set<string> explorados;
+    priority_queue<Nodo*,vector<Nodo*>, CompareASTAR16> fronteira;
+    vector<Nodo*> sucessores;
+    vector<Nodo*> nos_alocados;
+    vector<string> caminho;
+    Nodo* solucao;
+
+    int stop = 0;
+
+    Nodo *init = new Nodo (init_estate,NULL,"",0);
+    nos_alocados.push_back(init);
+    heuristica_inicial = init->distanceManhatan("16");
+
+    if(init->e_Solucao()){
+        delete init;
+        return ;
+    }
+    
+    fronteira.push(init);
+    explorados.insert(init->convert());
+    while(!fronteira.empty()){
+        Nodo *atual = fronteira.top();
+        //cin >> stop;
+        fronteira.pop();
+        //cout << 'p' << atual->distanceManhatan() << " " << atual->custo << endl;
+        cout <<'S'<< endl;
+        nos_expandidos ++;
+        atual->expande(sucessores,atual,nos_alocados,"16");
+        for(int i = 0; i<sucessores.size();i++){ 
+            if(sucessores.front()->e_Solucao()){
+                solucao = sucessores.front();
+                solucao->caminho(caminho);
+                solucao->printEstado();
+                comprimento_solução = caminho.size();
+                delete_nodos(nos_alocados);
+                media_heuristica = media_heuristica/nos_expandidos;
+                return ;
+            }
+
+            if(!explorados.count(sucessores.front()->convert())){
+                media_heuristica += sucessores.front()->distanceManhatan("16");
+                explorados.insert(sucessores.front()->convert());
+                //cout << sucessores.front()->distanceManhatan() << " " << sucessores.front()->custo << endl;
+                fronteira.push(sucessores.front());
+            }
+            sucessores.erase(sucessores.begin());
+        }
+    }
+    return ;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -117,7 +283,35 @@ int main(int argc, char *argv[])
 
     }
     else if(!(algorithm.compare("-astar"))){
-        cout << "astar" << endl;
+        for(int i = 0;i<inputs.size();i++){
+
+            if(inputs[0].size() == 9){
+                time(&start); 
+                ios_base::sync_with_stdio(false); 
+                astar(inputs[i]);
+                time(&end); 
+                time_taken = double(end - start);
+                cout << nos_expandidos << ',';
+                cout << comprimento_solução << ',';
+                cout << fixed << time_taken <<',' ;
+                cout << media_heuristica << ',';
+                cout << heuristica_inicial << endl;
+            }
+            else{
+
+                time(&start); 
+                ios_base::sync_with_stdio(false); 
+                astar16(inputs[i]);
+                time(&end); 
+                time_taken = double(end - start);
+                cout << nos_expandidos << ',';
+                cout << comprimento_solução << ',';
+                cout << fixed << time_taken <<',' ;
+                cout << media_heuristica << ',';
+                cout << heuristica_inicial << endl;
+            }
+        }
+
     }
     else if(!(algorithm.compare("-idastar"))){
         cout << "idastar" << endl;
@@ -126,7 +320,19 @@ int main(int argc, char *argv[])
         cout << "idfs" << endl;
     }
     else if(!(algorithm.compare("-gbfs"))){
-        cout << "gbfs" << endl;
+        for(int i = 0;i<inputs.size();i++){
+
+            time(&start); 
+            ios_base::sync_with_stdio(false); 
+            gbfs(inputs[i]);
+            time(&end); 
+            time_taken = double(end - start);
+            cout << nos_expandidos << ',';
+            cout << comprimento_solução << ',';
+            cout << fixed << time_taken <<',' ;
+            cout << media_heuristica << ',';
+            cout << heuristica_inicial << endl;
+        }
     }
     else
         cout << "algoritmo errado" << endl;
