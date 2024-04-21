@@ -304,6 +304,75 @@ void idfs(vector<int> init_estate)
     }
 }
 
+Nodo* idastar_aux(vector<Nodo*> &nos_alocados,Nodo* atual, int& f_limit)
+{
+    vector<Nodo*> sucessores;
+    Nodo *solucao = NULL;
+
+    if((atual->custo + atual->distanceManhatan()) > f_limit){
+    	nos_expandidos ++;
+    	f_limit = atual->custo + atual->distanceManhatan();
+    	return NULL;
+    }
+    
+    
+    if(atual->e_Solucao()){
+    	nos_expandidos ++;
+        f_limit = std::numeric_limits<int>::max();
+        return atual;
+    }
+    
+    int next_limit = std::numeric_limits<int>::max();
+    int rec_limit = std::numeric_limits<int>::max();
+    atual->expande(sucessores,atual,nos_alocados);
+    nos_expandidos ++;
+    int tamanho = sucessores.size();
+    for(int i = 0;i<tamanho;i++){
+            Nodo *new_nodo = sucessores.front();
+            //printf("Imprimindo o sucessor %d \n", i);
+            //new_nodo->printEstado();
+            if(new_nodo->distanceManhatan() < std::numeric_limits<int>::max()){
+            	sucessores.erase(sucessores.begin());
+            	solucao = idastar_aux(nos_alocados, new_nodo, f_limit);
+            	if(solucao != NULL){
+            	    f_limit = std::numeric_limits<int>::max();
+		    return solucao;
+	    	}
+	    	next_limit = std::min(next_limit, rec_limit);
+            }
+    }
+    
+    f_limit = next_limit;
+    return NULL;
+}
+
+void idastar(vector<int> init_estate)	{
+    nos_expandidos = 0;
+    comprimento_solução = 0;
+    media_heuristica = 0;
+
+    Nodo *init = new Nodo (init_estate,NULL,"",0);
+    heuristica_inicial = init->distanceManhatan();
+    
+	
+    Nodo *solucao = NULL;
+    vector<Nodo*> nos_alocados;
+    nos_alocados.push_back(init);
+    vector<string> caminho;
+    
+    int f_limit = heuristica_inicial;
+    
+    while (f_limit != std::numeric_limits<int>::max()){
+    	solucao = idastar_aux(nos_alocados, init, f_limit);
+        if(solucao != NULL){
+            solucao->caminho(caminho);
+            //solucao->printEstado();
+            comprimento_solução = caminho.size();
+            delete_nodos(nos_alocados);
+            return;
+    	}
+    }
+}	
 
 int main(int argc, char *argv[])
 {
@@ -359,7 +428,16 @@ int main(int argc, char *argv[])
 
     }
     else if(!(algorithm.compare("-idastar"))){
-        cout << "idastar" << endl;
+          for(int i = 0;i<inputs.size();i++){
+        	chrono::system_clock::time_point t = chrono::system_clock::now();
+        	ios_base::sync_with_stdio(false); 
+        	idastar(inputs[i]);
+         	cout << nos_expandidos << ',';
+         	cout << comprimento_solução << ',';
+         	cout << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now()-t).count() <<',' ;
+         	cout << media_heuristica << ',';
+         	cout << heuristica_inicial << endl;
+           }
     }
     else if(!(algorithm.compare("-idfs"))){
          for(int i = 0;i<inputs.size();i++){
