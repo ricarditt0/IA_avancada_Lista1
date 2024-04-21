@@ -1,6 +1,7 @@
 #include<vector>
 #include<string>
 #include<iostream>
+#include<iomanip> 
 
 using namespace std;
 
@@ -11,6 +12,7 @@ class Nodo
     Nodo* pai;
     string acao;
     int custo;
+    int h;
 
     Nodo(){}
 
@@ -27,9 +29,10 @@ class Nodo
                 distancia += rowDistance + colDistance;
             }
         }
+        this->h = distancia;
     	return distancia;
     }
-    int distanceManhatan(string num_puzzle){
+    int distanceManhatan16(){
         int distancia = 0;
         for (int i = 0; i < 16; ++i) {
             if (estado[i]) {
@@ -39,6 +42,7 @@ class Nodo
                 distancia += rowDistance + colDistance;
             }
         }
+        this->h = distancia;
     	return distancia;
     }
 
@@ -97,7 +101,7 @@ class Nodo
             nos_alocados.push_back(sucessores.back()); 
         }
     }
-    void expande(vector<Nodo*>& sucessores,Nodo *pai,vector<Nodo*>& nos_alocados,string num_puzzle)
+    void expande16(vector<Nodo*>& sucessores,Nodo *pai,vector<Nodo*>& nos_alocados)
     {
         int i = 0;
         int custo = 0;
@@ -147,7 +151,7 @@ class Nodo
         else
         {
             for(int i = 0; i < 16; i++){
-                    cout << this->estado[i] << " ";
+                    cout << this->estado[i] << '\t';
                 if(!((i+1)%4))
                     cout << endl;
             }
@@ -159,8 +163,8 @@ class Nodo
 class CompareGBFS {
     public:
         bool operator()(Nodo *a, Nodo *b){
-            if(a->distanceManhatan()!= b->distanceManhatan())
-                return a->distanceManhatan() > b->distanceManhatan();
+            if(a->h!= b->h)
+                return a->h > b->h;
             if(a->custo != b->custo)
                 return a->custo < b->custo;
             return true;
@@ -170,12 +174,12 @@ class CompareGBFS {
 class CompareASTAR{
     public:
         bool operator()(Nodo *a,Nodo *b){
-            int f_a = a->custo + a->distanceManhatan();
-            int f_b = b->custo + b->distanceManhatan();
+            int f_a = a->custo + a->h;
+            int f_b = b->custo + b->h;
             if(f_a != f_b)
                 return f_a > f_b;
-            if(a->distanceManhatan()!= b->distanceManhatan())
-                return a->distanceManhatan() > b->distanceManhatan();
+            if(a->h!= b->h)
+                return a->h > b->h;
             return false;
         }
 };
@@ -183,12 +187,13 @@ class CompareASTAR{
 class CompareASTAR16{
     public:
         bool operator()(Nodo *a,Nodo *b){
-            int f_a = a->custo + a->distanceManhatan("16");
-            int f_b = b->custo + b->distanceManhatan("16");
+            int f_a = a->h + a->custo;
+            int f_b = b->h + b->custo; 
+
             if(f_a != f_b)
                 return f_a > f_b;
-            if(a->distanceManhatan("16")!= b->distanceManhatan("16"))
-                return a->distanceManhatan("16") > b->distanceManhatan("16");
+            if(a->h!= b->h)
+                return a->h > b->h;
             return false;
         }
 };
