@@ -254,6 +254,56 @@ void astar16(vector<int> init_estate)
 }
 
 
+Nodo* dls(vector<Nodo*> &nos_alocados,Nodo* atual, int depth_Limit)
+{
+    vector<Nodo*> sucessores;
+    Nodo *solucao = NULL;
+
+    if(atual->e_Solucao()){
+        return atual;
+    }
+    if(depth_Limit > 0){
+        atual->expande(sucessores,atual,nos_alocados);
+        nos_expandidos ++;
+        for(int i = 0;i<sucessores.size();i++){
+            solucao = dls(nos_alocados,sucessores[i],depth_Limit-1);
+            if(solucao != NULL){
+                return solucao;
+            }
+        }
+    }
+    return NULL;
+}
+
+void idfs(vector<int> init_estate)
+{
+    nos_expandidos = 0;
+    comprimento_solução = 0;
+    media_heuristica = 0;
+
+    Nodo *init = new Nodo (init_estate,NULL,"",0);
+    heuristica_inicial = init->distanceManhatan();
+
+    Nodo *solucao = NULL;
+    vector<Nodo*> nos_alocados;
+    nos_alocados.push_back(init);
+    vector<string> caminho;
+    init->printEstado();
+    int i = 0;
+    while(true){
+        solucao = dls(nos_alocados,init,i);
+        if(solucao != NULL){
+            solucao->caminho(caminho);
+            solucao->printEstado();
+            comprimento_solução = caminho.size();
+            delete_nodos(nos_alocados);
+            return;
+        }
+        i++;
+    }
+}
+
+
 int main(int argc, char *argv[])
 {
     int stop;
@@ -317,7 +367,20 @@ int main(int argc, char *argv[])
         cout << "idastar" << endl;
     }
     else if(!(algorithm.compare("-idfs"))){
-        cout << "idfs" << endl;
+         for(int i = 0;i<inputs.size();i++){
+
+            time(&start); 
+            ios_base::sync_with_stdio(false); 
+            idfs(inputs[i]);
+            time(&end); 
+            time_taken = double(end - start);
+            cout << nos_expandidos << ',';
+            cout << comprimento_solução << ',';
+            cout << fixed << time_taken <<',' ;
+            cout << media_heuristica << ',';
+            cout << heuristica_inicial << endl;
+        }
+
     }
     else if(!(algorithm.compare("-gbfs"))){
         for(int i = 0;i<inputs.size();i++){
