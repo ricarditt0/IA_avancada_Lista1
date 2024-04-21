@@ -7,6 +7,7 @@
 #include<unordered_set>
 #include <iomanip>
 #include"Nodo.cpp"
+#include <chrono>
 
 using namespace std;
 
@@ -122,7 +123,7 @@ void gbfs(vector<int> init_estate)
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
                 solucao->caminho(caminho);
-                solucao->printEstado();
+                //solucao->printEstado();
                 comprimento_solução = caminho.size();
                 delete_nodos(nos_alocados);
                 media_heuristica = media_heuristica/nos_expandidos;
@@ -178,7 +179,7 @@ void astar(vector<int> init_estate)
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
                 solucao->caminho(caminho);
-                solucao->printEstado();
+                //solucao->printEstado();
                 comprimento_solução = caminho.size();
                 delete_nodos(nos_alocados);
                 media_heuristica = media_heuristica/nos_expandidos;
@@ -234,7 +235,7 @@ void astar16(vector<int> init_estate)
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
                 solucao->caminho(caminho);
-                solucao->printEstado();
+                //solucao->printEstado();
                 comprimento_solução = caminho.size();
                 delete_nodos(nos_alocados);
                 media_heuristica = media_heuristica/nos_expandidos;
@@ -288,13 +289,13 @@ void idfs(vector<int> init_estate)
     vector<Nodo*> nos_alocados;
     nos_alocados.push_back(init);
     vector<string> caminho;
-    init->printEstado();
+    //init->printEstado();
     int i = 0;
     while(true){
         solucao = dls(nos_alocados,init,i);
         if(solucao != NULL){
             solucao->caminho(caminho);
-            solucao->printEstado();
+            //solucao->printEstado();
             comprimento_solução = caminho.size();
             delete_nodos(nos_alocados);
             return;
@@ -318,14 +319,12 @@ int main(int argc, char *argv[])
     if(!(algorithm.compare("-bfs"))){
         for(int i = 0;i<inputs.size();i++){
 
-            time(&start); 
+            chrono::system_clock::time_point t = chrono::system_clock::now();
             ios_base::sync_with_stdio(false); 
             bfs(inputs[i]);
-            time(&end); 
-            time_taken = double(end - start);
             cout << nos_expandidos << ',';
             cout << comprimento_solução << ',';
-            cout << fixed << time_taken <<',' ;
+            cout << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now()-t).count() <<',' ;
             cout << media_heuristica << ',';
             cout << heuristica_inicial << endl;
         }
@@ -336,27 +335,23 @@ int main(int argc, char *argv[])
         for(int i = 0;i<inputs.size();i++){
 
             if(inputs[0].size() == 9){
-                time(&start); 
+                chrono::system_clock::time_point t = chrono::system_clock::now(); 
                 ios_base::sync_with_stdio(false); 
                 astar(inputs[i]);
-                time(&end); 
-                time_taken = double(end - start);
                 cout << nos_expandidos << ',';
                 cout << comprimento_solução << ',';
-                cout << fixed << time_taken <<',' ;
+                cout << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now()-t).count() <<',' ;
                 cout << media_heuristica << ',';
                 cout << heuristica_inicial << endl;
             }
             else{
 
-                time(&start); 
+                chrono::system_clock::time_point t = chrono::system_clock::now();
                 ios_base::sync_with_stdio(false); 
                 astar16(inputs[i]);
-                time(&end); 
-                time_taken = double(end - start);
                 cout << nos_expandidos << ',';
                 cout << comprimento_solução << ',';
-                cout << fixed << time_taken <<',' ;
+                cout << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now()-t).count() <<',' ;
                 cout << media_heuristica << ',';
                 cout << heuristica_inicial << endl;
             }
@@ -369,14 +364,12 @@ int main(int argc, char *argv[])
     else if(!(algorithm.compare("-idfs"))){
          for(int i = 0;i<inputs.size();i++){
 
-            time(&start); 
+            chrono::system_clock::time_point t = chrono::system_clock::now();
             ios_base::sync_with_stdio(false); 
             idfs(inputs[i]);
-            time(&end); 
-            time_taken = double(end - start);
             cout << nos_expandidos << ',';
             cout << comprimento_solução << ',';
-            cout << fixed << time_taken <<',' ;
+            cout << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now()-t).count() <<',' ;
             cout << media_heuristica << ',';
             cout << heuristica_inicial << endl;
         }
@@ -385,14 +378,12 @@ int main(int argc, char *argv[])
     else if(!(algorithm.compare("-gbfs"))){
         for(int i = 0;i<inputs.size();i++){
 
-            time(&start); 
+	    chrono::system_clock::time_point t = chrono::system_clock::now();
             ios_base::sync_with_stdio(false); 
             gbfs(inputs[i]);
-            time(&end); 
-            time_taken = double(end - start);
             cout << nos_expandidos << ',';
             cout << comprimento_solução << ',';
-            cout << fixed << time_taken <<',' ;
+            cout << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now()-t).count() <<',' ;
             cout << media_heuristica << ',';
             cout << heuristica_inicial << endl;
         }
