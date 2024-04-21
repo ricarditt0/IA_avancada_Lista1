@@ -101,7 +101,8 @@ void gbfs(vector<int> init_estate)
 
     Nodo *init = new Nodo (init_estate,NULL,"",0);
     nos_alocados.push_back(init);
-    heuristica_inicial = init->distanceManhatan();
+    init->distanceManhatan();
+    heuristica_inicial = init->h;
 
     if(init->e_Solucao()){
         delete init;
@@ -112,6 +113,7 @@ void gbfs(vector<int> init_estate)
     explorados.insert(init->convert());
     while(!fronteira.empty()){
         Nodo *atual = fronteira.top();
+
         //cin >> stop;
         fronteira.pop();
         //cout << 'p' << atual->distanceManhatan() << " " << atual->custo << endl;
@@ -119,10 +121,12 @@ void gbfs(vector<int> init_estate)
         nos_expandidos ++;
         atual->expande(sucessores,atual,nos_alocados);
         for(int i = 0; i<sucessores.size();i++){ 
+            sucessores.front()->distanceManhatan();
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
                 solucao->caminho(caminho);
                 solucao->printEstado();
+                media_heuristica += solucao->h;
                 comprimento_solução = caminho.size();
                 delete_nodos(nos_alocados);
                 media_heuristica = media_heuristica/nos_expandidos;
@@ -130,9 +134,8 @@ void gbfs(vector<int> init_estate)
             }
 
             if(!explorados.count(sucessores.front()->convert())){
-                media_heuristica += sucessores.front()->distanceManhatan();
+                media_heuristica += sucessores.front()->h;
                 explorados.insert(sucessores.front()->convert());
-                //cout << sucessores.front()->distanceManhatan() << " " << sucessores.front()->custo << endl;
                 fronteira.push(sucessores.front());
             }
             sucessores.erase(sucessores.begin());
@@ -157,7 +160,8 @@ void astar(vector<int> init_estate)
 
     Nodo *init = new Nodo (init_estate,NULL,"",0);
     nos_alocados.push_back(init);
-    heuristica_inicial = init->distanceManhatan();
+    init->distanceManhatan();
+    heuristica_inicial = init->h;
 
     if(init->e_Solucao()){
         delete init;
@@ -168,6 +172,7 @@ void astar(vector<int> init_estate)
     explorados.insert(init->convert());
     while(!fronteira.empty()){
         Nodo *atual = fronteira.top();
+        atual->distanceManhatan();
         //cin >> stop;
         fronteira.pop();
         //cout << 'p' << atual->distanceManhatan() << " " << atual->custo << endl;
@@ -175,10 +180,12 @@ void astar(vector<int> init_estate)
         nos_expandidos ++;
         atual->expande(sucessores,atual,nos_alocados);
         for(int i = 0; i<sucessores.size();i++){ 
+            sucessores.front()->distanceManhatan();
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
                 solucao->caminho(caminho);
                 solucao->printEstado();
+                media_heuristica += solucao->h;
                 comprimento_solução = caminho.size();
                 delete_nodos(nos_alocados);
                 media_heuristica = media_heuristica/nos_expandidos;
@@ -186,9 +193,8 @@ void astar(vector<int> init_estate)
             }
 
             if(!explorados.count(sucessores.front()->convert())){
-                media_heuristica += sucessores.front()->distanceManhatan();
+                media_heuristica += sucessores.front()->h;
                 explorados.insert(sucessores.front()->convert());
-                //cout << sucessores.front()->distanceManhatan() << " " << sucessores.front()->custo << endl;
                 fronteira.push(sucessores.front());
             }
             sucessores.erase(sucessores.begin());
@@ -213,8 +219,8 @@ void astar16(vector<int> init_estate)
 
     Nodo *init = new Nodo (init_estate,NULL,"",0);
     nos_alocados.push_back(init);
-    heuristica_inicial = init->distanceManhatan("16");
-
+    init->distanceManhatan16();
+    heuristica_inicial = init->h;
     if(init->e_Solucao()){
         delete init;
         return ;
@@ -225,16 +231,17 @@ void astar16(vector<int> init_estate)
     while(!fronteira.empty()){
         Nodo *atual = fronteira.top();
         //cin >> stop;
+        cout << nos_expandidos << endl;
         fronteira.pop();
-        //cout << 'p' << atual->distanceManhatan() << " " << atual->custo << endl;
-        cout <<'S'<< endl;
         nos_expandidos ++;
-        atual->expande(sucessores,atual,nos_alocados,"16");
+        atual->expande16(sucessores,atual,nos_alocados);
         for(int i = 0; i<sucessores.size();i++){ 
+            sucessores.front()->distanceManhatan();
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
                 solucao->caminho(caminho);
                 solucao->printEstado();
+                media_heuristica += solucao->h;
                 comprimento_solução = caminho.size();
                 delete_nodos(nos_alocados);
                 media_heuristica = media_heuristica/nos_expandidos;
@@ -242,7 +249,7 @@ void astar16(vector<int> init_estate)
             }
 
             if(!explorados.count(sucessores.front()->convert())){
-                media_heuristica += sucessores.front()->distanceManhatan("16");
+                media_heuristica += sucessores.front()->h;
                 explorados.insert(sucessores.front()->convert());
                 //cout << sucessores.front()->distanceManhatan() << " " << sucessores.front()->custo << endl;
                 fronteira.push(sucessores.front());
@@ -348,7 +355,16 @@ int main(int argc, char *argv[])
                 cout << heuristica_inicial << endl;
             }
             else{
-
+                // vector<Nodo*> sucessores;
+                // Nodo *init = new Nodo (inputs[0],NULL,"",0);
+                // vector<Nodo*> nos_alocados;
+                // init->printEstado();
+                // cout << init->distanceManhatan16() << endl;
+                // init->expande16(sucessores,init,nos_alocados);
+                // for(int i = 0;i<sucessores.size();i++){
+                //     sucessores[i]->printEstado();
+                //     cout << sucessores[i]->convert() << endl;
+                // }
                 time(&start); 
                 ios_base::sync_with_stdio(false); 
                 astar16(inputs[i]);
