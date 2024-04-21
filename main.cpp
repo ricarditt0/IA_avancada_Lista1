@@ -310,14 +310,12 @@ Nodo* idastar_aux(vector<Nodo*> &nos_alocados,Nodo* atual, int f_limit, int& ret
     Nodo *solucao = NULL;
 
     if((atual->custo + atual->distanceManhatan()) > f_limit){
-    	nos_expandidos ++;
     	retorno_limit = atual->custo + atual->distanceManhatan();
     	return NULL;
     }
     
     
     if(atual->e_Solucao()){
-    	nos_expandidos ++;
         retorno_limit = std::numeric_limits<int>::max();
         return atual;
     }
@@ -326,6 +324,7 @@ Nodo* idastar_aux(vector<Nodo*> &nos_alocados,Nodo* atual, int f_limit, int& ret
     int rec_limit = std::numeric_limits<int>::max();
     atual->expande(sucessores,atual,nos_alocados);
     nos_expandidos ++;
+    media_heuristica += atual->distanceManhatan();
     int tamanho = sucessores.size();
     for(int i = 0;i<tamanho;i++){
             Nodo *new_nodo = sucessores.front();
@@ -435,7 +434,7 @@ int main(int argc, char *argv[])
          	cout << nos_expandidos << ',';
          	cout << comprimento_solução << ',';
          	cout << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now()-t).count() <<',' ;
-         	cout << media_heuristica << ',';
+         	cout << media_heuristica / nos_expandidos << ',';
          	cout << heuristica_inicial << endl;
            }
     }
