@@ -16,6 +16,32 @@ int comprimento_solução = 0;
 double media_heuristica = 0;
 int heuristica_inicial = 0;
 
+void print_fornteira(priority_queue<Nodo*,vector<Nodo*>, CompareASTAR> fronteira){
+    priority_queue<Nodo*,vector<Nodo*>, CompareASTAR> copia = fronteira;
+    Nodo* atual;
+    vector<Nodo*> buffer;
+    cout << "f = ";
+    for(int i = 0 ; i < copia.size(); i++){
+        atual = copia.top();
+        copia.pop();
+        cout << "(" << atual->h << "," << atual->custo << ":" << atual->h+atual->custo <<")" <<" ";
+    }
+    cout << endl << endl;
+}
+
+void print_fornteira(priority_queue<Nodo16*,vector<Nodo16*>, CompareASTAR16> fronteira){
+    priority_queue<Nodo16*,vector<Nodo16*>, CompareASTAR16> copia = fronteira;
+    Nodo16* atual;
+    vector<Nodo16*> buffer;
+    cout << "f = ";
+    for(int i = 0 ; i < copia.size(); i++){
+        atual = copia.top();
+        copia.pop();
+        cout << "(" << atual->h << "," << atual->g << ":" << atual->h+atual->g <<")" <<" ";
+    }
+    cout << endl << endl;
+}
+
 void delete_nodos(vector<Nodo*> &nos_alocados)
 {
     for(int i = 0 ; i < nos_alocados.size(); i++){
@@ -23,9 +49,16 @@ void delete_nodos(vector<Nodo*> &nos_alocados)
     }
 }
 
-void readInputs(vector<vector<int>>& inputs ,int argc ,char* argv[])
+void delete_nodos(vector<Nodo16*> &nos_alocados)
 {
-    vector<int> input;
+    for(int i = 0 ; i < nos_alocados.size(); i++){
+        delete nos_alocados[i];
+    }
+}
+
+void readInputs(vector<vector<short int>>& inputs ,int argc ,char* argv[])
+{
+    vector<short int> input;
     for(int i = 2;i < argc; i++){
         if(strlen(argv[i]) == 2 && argv[i][1] == ','){
             input.push_back(atoi(argv[i]));
@@ -39,7 +72,7 @@ void readInputs(vector<vector<int>>& inputs ,int argc ,char* argv[])
     inputs.push_back(input);
 }
 
-void bfs(vector<int> init_estate)
+void bfs(vector<short int> init_estate)
 {
     nos_expandidos = 0;
     comprimento_solução = 0;
@@ -86,13 +119,13 @@ void bfs(vector<int> init_estate)
     return ;
 }
 
-void gbfs(vector<int> init_estate)
+void gbfs(vector<short int> init_estate)
 {
     nos_expandidos = 0;
     comprimento_solução = 0;
     media_heuristica = 0;
     unordered_set<string> explorados;
-    priority_queue<Nodo*,vector<Nodo*>, CompareGBFS> fronteira;
+    priority_queue<Nodo*,vector<Nodo*>, CompareGBFS> fronteira , copia;
     vector<Nodo*> sucessores;
     vector<Nodo*> nos_alocados;
     vector<string> caminho;
@@ -145,7 +178,7 @@ void gbfs(vector<int> init_estate)
     return ;
 }
 
-void astar(vector<int> init_estate)
+void astar(vector<short int> init_estate)
 {
     nos_expandidos = 0;
     comprimento_solução = 0;
@@ -174,10 +207,13 @@ void astar(vector<int> init_estate)
     while(!fronteira.empty()){
         Nodo *atual = fronteira.top();
         atual->distanceManhatan();
-        //cin >> stop;
+
+        //cout << "atual" << endl;
+        //atual->printEstado();
+
         fronteira.pop();
-        //cout << 'p' << atual->distanceManhatan() << " " << atual->custo << endl;
-        //cout << endl;
+
+        //print_fornteira(fronteira);
         nos_expandidos ++;
         atual->expande(sucessores,atual,nos_alocados);
         for(int i = 0; i<sucessores.size();i++){ 
@@ -196,6 +232,9 @@ void astar(vector<int> init_estate)
             if(!explorados.count(sucessores.front()->convert())){
                 media_heuristica += sucessores.front()->h;
                 explorados.insert(sucessores.front()->convert());
+
+                //sucessores.front()->printEstado();
+
                 fronteira.push(sucessores.front());
             }
             sucessores.erase(sucessores.begin());
@@ -204,23 +243,24 @@ void astar(vector<int> init_estate)
     return ;
 }
 
-void astar16(vector<int> init_estate)
+void astar16(vector<char> init_estate)
 {
     nos_expandidos = 0;
     comprimento_solução = 0;
     media_heuristica = 0;
     unordered_set<string> explorados;
-    priority_queue<Nodo*,vector<Nodo*>, CompareASTAR16> fronteira;
-    vector<Nodo*> sucessores;
-    vector<Nodo*> nos_alocados;
+    priority_queue<Nodo16*,vector<Nodo16*>, CompareASTAR16> fronteira;
+    vector<Nodo16*> sucessores;
+    vector<Nodo16*> nos_alocados;
     vector<string> caminho;
-    Nodo* solucao;
+    Nodo16* solucao;
 
     int stop = 0;
 
-    Nodo *init = new Nodo (init_estate,NULL,"",0);
+    Nodo16 *init = new Nodo16 (init_estate,NULL,' ',0);
     nos_alocados.push_back(init);
-    init->distanceManhatan16();
+    init->distanceManhatan();
+    init->printEstado();
     heuristica_inicial = init->h;
     if(init->e_Solucao()){
         delete init;
@@ -230,20 +270,17 @@ void astar16(vector<int> init_estate)
     fronteira.push(init);
     explorados.insert(init->convert());
     while(!fronteira.empty()){
-        Nodo *atual = fronteira.top();
-        //cin >> stop;
-        cout << atual->h << endl;
+        Nodo16 *atual = fronteira.top();
         fronteira.pop();
         nos_expandidos ++;
-        atual->expande16(sucessores,atual,nos_alocados);
+        atual->expande(sucessores,atual,nos_alocados);
         for(int i = 0; i<sucessores.size();i++){ 
             sucessores.front()->distanceManhatan();
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
-                solucao->caminho(caminho);
                 solucao->printEstado();
                 media_heuristica += solucao->h;
-                comprimento_solução = caminho.size();
+                comprimento_solução = solucao->g;
                 delete_nodos(nos_alocados);
                 media_heuristica = media_heuristica/nos_expandidos;
                 return ;
@@ -252,7 +289,6 @@ void astar16(vector<int> init_estate)
             if(!explorados.count(sucessores.front()->convert())){
                 media_heuristica += sucessores.front()->h;
                 explorados.insert(sucessores.front()->convert());
-                //cout << sucessores.front()->distanceManhatan() << " " << sucessores.front()->custo << endl;
                 fronteira.push(sucessores.front());
             }
             sucessores.erase(sucessores.begin());
@@ -283,7 +319,7 @@ Nodo* dls(vector<Nodo*> &nos_alocados,Nodo* atual, int depth_Limit)
     return NULL;
 }
 
-void idfs(vector<int> init_estate)
+void idfs(vector<short int> init_estate)
 {
     nos_expandidos = 0;
     comprimento_solução = 0;
@@ -351,7 +387,7 @@ Nodo* idastar_aux(vector<Nodo*> &nos_alocados,Nodo* atual, int f_limit, int& ret
     return NULL;
 }
 
-void idastar(vector<int> init_estate)	{
+void idastar(vector<short int> init_estate)	{
     nos_expandidos = 0;
     comprimento_solução = 0;
     media_heuristica = 0;
@@ -384,13 +420,12 @@ void idastar(vector<int> init_estate)	{
 int main(int argc, char *argv[])
 {
     int stop;
-    vector<vector<int>> inputs;
+    vector<vector<short int>> inputs;
     string algorithm = argv[1];
     time_t start, end;
     double time_taken ;
 
     readInputs(inputs,argc,argv);
-    vector<Nodo> sucessores;
 
     if(!(algorithm.compare("-bfs"))){
         for(int i = 0;i<inputs.size();i++){
@@ -422,9 +457,13 @@ int main(int argc, char *argv[])
             }
             else{
 
+                vector<char> ini_state;
+                for(int j = 0; j<16;j++){
+                    ini_state.push_back(char(inputs[i][j]));
+                }
                 chrono::system_clock::time_point t = chrono::system_clock::now();
                 ios_base::sync_with_stdio(false); 
-                astar16(inputs[i]);
+                astar16(ini_state);
                 cout << nos_expandidos << ',';
                 cout << comprimento_solução << ',';
                 cout << chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now()-t).count() <<',' ;
@@ -473,8 +512,9 @@ int main(int argc, char *argv[])
             cout << heuristica_inicial << endl;
         }
     }
-    else
+    else{
         cout << "algoritmo errado" << endl;
+    }
  
 
 }
