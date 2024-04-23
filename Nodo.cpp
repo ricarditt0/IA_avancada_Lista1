@@ -170,7 +170,7 @@ class CompareGBFS
     public:
         bool operator()(Nodo *a, Nodo *b){
             if(a->h!= b->h){
-            	printf(" To retornando %d, porque a= %d e b= %d.\n", a->h > b->h, a->h, b->h);
+            	//printf(" To retornando %d, porque a= %d e b= %d.\n", a->h > b->h, a->h, b->h);
                 return a->h > b->h;
                 }
             if(a->custo != b->custo)

@@ -25,7 +25,7 @@ void print_fornteira(priority_queue<Nodo*,vector<Nodo*>, CompareASTAR> fronteira
     for(int i = 0 ; i < tamanho; i++){
         atual = copia.top();
         copia.pop();
-        cout << "(h:" << atual->distanceManhatan() << " + g:" << atual->custo << " = f:" << atual->h+atual->custo <<")" <<" ";
+        cout << "(h:" << atual->h << " + g:" << atual->custo << " = f:" << atual->h+atual->custo <<")" <<" ";
     }
     cout << endl << endl;
 }
@@ -102,7 +102,7 @@ void bfs(vector<short int> init_estate)
         fronteira.pop();
         nos_expandidos++;
         atual->expande(sucessores,atual,nos_alocados);
-        for(int i = 0; i<sucessores.size();i++){ 
+        while(!sucessores.empty()){ 
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
                 solucao->caminho(caminho);
@@ -158,7 +158,7 @@ void gbfs(vector<short int> init_estate)
         //atual->printEstado();
         //printf("Nós expandidos no momentos: %ld\n", nos_expandidos);
         atual->expande(sucessores,atual,nos_alocados);
-        for(int i = 0; i<sucessores.size();i++){ 
+        while(!sucessores.empty()){ 
             sucessores.front()->distanceManhatan();
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
@@ -222,8 +222,9 @@ void astar(vector<short int> init_estate)
         //print_fornteira(fronteira);
         nos_expandidos ++;
         atual->expande(sucessores,atual,nos_alocados);
-        for(int i = 0; i<sucessores.size();i++){ 
+        while(!sucessores.empty()){ 
             sucessores.front()->distanceManhatan();
+            //cout << sucessores.front()->h << endl;
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
                 solucao->caminho(caminho);
@@ -281,7 +282,7 @@ void astar16(vector<char> init_estate)
         fronteira.pop();
         nos_expandidos ++;
         atual->expande(sucessores,atual,nos_alocados);
-        for(int i = 0; i<sucessores.size();i++){ 
+        while(!sucessores.empty()){ 
             sucessores.front()->distanceManhatan();
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
@@ -340,13 +341,11 @@ void idfs(vector<short int> init_estate)
     vector<Nodo*> nos_alocados;
     nos_alocados.push_back(init);
     vector<string> caminho;
-    init->printEstado();
     int i = 0;
     while(true){
         solucao = dls(nos_alocados,init,i);
         if(solucao != NULL){
             solucao->caminho(caminho);
-            solucao->printEstado();
             comprimento_solução = caminho.size();
             delete_nodos(nos_alocados);
             return;
@@ -377,7 +376,7 @@ Nodo* idastar_aux(vector<Nodo*> &nos_alocados,Nodo* atual, int f_limit, int& ret
     nos_expandidos ++;
     media_heuristica += atual->h;
     int tamanho = sucessores.size();
-    for(int i = 0;i<tamanho;i++){
+    while(!sucessores.empty()){
             sucessores.front()->distanceManhatan();
             Nodo *new_nodo = sucessores.front();
             sucessores.erase(sucessores.begin());
@@ -522,6 +521,24 @@ int main(int argc, char *argv[])
         }
     }
     else{
+
         cout << "algoritmo errado" << endl;
+        vector<Nodo*> sucessores;
+        vector<Nodo*> alocados;
+        priority_queue<Nodo*,vector<Nodo*>, CompareASTAR> fron;
+        Nodo* novo = new Nodo(inputs[0],NULL,"",0);
+        novo->expande(sucessores,novo,alocados);
+        novo->printEstado();
+        while(!sucessores.empty()){
+            cout << sucessores.front()->convert() << endl;
+            fron.push(sucessores.front());
+            sucessores.erase(sucessores.begin());
+        }
+        cout << 'o' << endl;
+        while(!fron.empty()){
+            fron.top()->printEstado();
+            fron.pop();
+        }
+
     }
 }
