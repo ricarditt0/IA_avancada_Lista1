@@ -21,10 +21,11 @@ void print_fornteira(priority_queue<Nodo*,vector<Nodo*>, CompareASTAR> fronteira
     Nodo* atual;
     vector<Nodo*> buffer;
     cout << "f = ";
-    for(int i = 0 ; i < copia.size(); i++){
+    int tamanho = copia.size();
+    for(int i = 0 ; i < tamanho; i++){
         atual = copia.top();
         copia.pop();
-        cout << "(" << atual->h << "," << atual->custo << ":" << atual->h+atual->custo <<")" <<" ";
+        cout << "(h:" << atual->distanceManhatan() << " + g:" << atual->custo << " = f:" << atual->h+atual->custo <<")" <<" ";
     }
     cout << endl << endl;
 }
@@ -34,7 +35,8 @@ void print_fornteira(priority_queue<Nodo16*,vector<Nodo16*>, CompareASTAR16> fro
     Nodo16* atual;
     vector<Nodo16*> buffer;
     cout << "f = ";
-    for(int i = 0 ; i < copia.size(); i++){
+    int tamanho = copia.size();
+    for(int i = 0 ; i < tamanho; i++){
         atual = copia.top();
         copia.pop();
         cout << "(" << atual->h << "," << atual->g << ":" << atual->h+atual->g <<")" <<" ";
@@ -153,13 +155,15 @@ void gbfs(vector<short int> init_estate)
         //cout << 'p' << atual->distanceManhatan() << " " << atual->custo << endl;
         //cout << endl;
         nos_expandidos ++;
+        //atual->printEstado();
+        //printf("Nós expandidos no momentos: %ld\n", nos_expandidos);
         atual->expande(sucessores,atual,nos_alocados);
         for(int i = 0; i<sucessores.size();i++){ 
             sucessores.front()->distanceManhatan();
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
                 solucao->caminho(caminho);
-                solucao->printEstado();
+                //solucao->printEstado();
                 media_heuristica += solucao->h;
                 comprimento_solução = caminho.size();
                 delete_nodos(nos_alocados);
@@ -205,6 +209,8 @@ void astar(vector<short int> init_estate)
     fronteira.push(init);
     explorados.insert(init->convert());
     while(!fronteira.empty()){
+    	//printf("Tamanho da fronteira: %ld\n", fronteira.size());
+    	//print_fornteira(fronteira);
         Nodo *atual = fronteira.top();
         atual->distanceManhatan();
 
@@ -221,7 +227,7 @@ void astar(vector<short int> init_estate)
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
                 solucao->caminho(caminho);
-                solucao->printEstado();
+                //solucao->printEstado();
                 media_heuristica += solucao->h;
                 comprimento_solução = caminho.size();
                 delete_nodos(nos_alocados);
@@ -242,6 +248,7 @@ void astar(vector<short int> init_estate)
     }
     return ;
 }
+
 
 void astar16(vector<char> init_estate)
 {
@@ -395,6 +402,7 @@ void idastar(vector<short int> init_estate)	{
     Nodo *init = new Nodo (init_estate,NULL,"",0);
     init->distanceManhatan();
     heuristica_inicial = init->h;
+    //media_heuristica += heuristica_inicial;
     
 	
     Nodo *solucao = NULL;

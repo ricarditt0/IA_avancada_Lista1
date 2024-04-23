@@ -80,25 +80,29 @@ class Nodo
         int custo = 0;
         while (this->estado[i] != 0)
             i ++;
-
+	
         if(i != 0 && i != 1 && i != 2 && this->acao.compare("baixo")){
             sucessores.push_back(new Nodo(swap(this->estado,i-3,i),pai,"cima",this->custo + 1));
             nos_alocados.push_back(sucessores.back());
+            //printf("Expandindo cima!\n");
         }
 
         if(i != 0 && i != 3 && i != 6 && this->acao.compare("direita")){
             sucessores.push_back(new Nodo(swap(this->estado,i-1,i),pai,"esquerda",this->custo + 1));
             nos_alocados.push_back(sucessores.back());
+            //printf("Expandindo esquerda!\n");
         }
 
         if(i != 2 && i != 5 && i != 8 && this->acao.compare("esquerda")){
             sucessores.push_back(new Nodo(swap(this->estado,i+1,i),pai,"direita",this->custo + 1));
             nos_alocados.push_back(sucessores.back());
+            //printf("Expandindo direita!\n");
         }
 
         if(i != 6 && i != 7 && i != 8 && this->acao.compare("cima")){
             sucessores.push_back(new Nodo(swap(this->estado,i+3,i),pai,"baixo",this->custo + 1));
             nos_alocados.push_back(sucessores.back()); 
+            //printf("Expandindo baixo!\n");
         }
     }
     // void expande16(vector<Nodo*>& sucessores,Nodo *pai,vector<Nodo*>& nos_alocados)
@@ -165,8 +169,10 @@ class CompareGBFS
 {
     public:
         bool operator()(Nodo *a, Nodo *b){
-            if(a->h!= b->h)
+            if(a->h!= b->h){
+            	printf(" To retornando %d, porque a= %d e b= %d.\n", a->h > b->h, a->h, b->h);
                 return a->h > b->h;
+                }
             if(a->custo != b->custo)
                 return a->custo < b->custo;
             return true;
@@ -177,13 +183,16 @@ class CompareASTAR
 {
     public:
         bool operator()(Nodo *a,Nodo *b){
-            int f_a = a->custo + a->h;
-            int f_b = b->custo + b->h;
+            int f_a = a->custo + a->distanceManhatan();
+            int f_b = b->custo + b->distanceManhatan();
             if(f_a != f_b)
                 return f_a > f_b;
-            if(a->h!= b->h)
-                return a->h > b->h;
-            return true;
+            if(a->distanceManhatan()!= b->distanceManhatan())
+                return a->distanceManhatan() > b->distanceManhatan();
+            if((a->acao == "cima") | (a->acao == "esquerda" && ((b->acao == "direita") | (b->acao == "baixo"))) | (a->acao == "direita" && b->acao == "baixo"))
+            	return true;
+            else
+            	return false;
         }
 };
 
