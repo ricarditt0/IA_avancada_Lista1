@@ -169,14 +169,16 @@ class CompareGBFS
 {
     public:
         bool operator()(Nodo *a, Nodo *b){
-            if(a->h!= b->h){
-            	//printf(" To retornando %d, porque a= %d e b= %d.\n", a->h > b->h, a->h, b->h);
-                return a->h > b->h;
+            if(a->distanceManhatan()!= b->distanceManhatan()){
+                return a->distanceManhatan() > b->distanceManhatan();
                 }
             if(a->custo != b->custo)
                 return a->custo < b->custo;
-            return true;
-        }
+            if((a->acao == "cima") | (a->acao == "esquerda" && ((b->acao == "direita") | (b->acao == "baixo"))) | (a->acao == "direita" && b->acao == "baixo"))
+            	return true;
+            else
+            	return false;
+            }
 };
 
 class CompareASTAR
