@@ -60,7 +60,7 @@ void readInputs(vector<vector<short int>>& inputs ,int argc ,char* argv[])
 {
     vector<short int> input;
     for(int i = 2;i < argc; i++){
-        if(strlen(argv[i]) == 2 && argv[i][1] == ','){
+        if((strlen(argv[i]) == 2 && argv[i][1] == ',')||(strlen(argv[i]) == 3 )){
             input.push_back(atoi(argv[i]));
             inputs.push_back(input);
             input.clear();
@@ -461,6 +461,7 @@ int main(int argc, char *argv[])
                 for(int j = 0; j<16;j++){
                     ini_state.push_back(char(inputs[i][j]));
                 }
+                cout << inputs.size() << endl;
                 chrono::system_clock::time_point t = chrono::system_clock::now();
                 ios_base::sync_with_stdio(false); 
                 astar16(ini_state);
@@ -515,6 +516,4 @@ int main(int argc, char *argv[])
     else{
         cout << "algoritmo errado" << endl;
     }
- 
-
 }

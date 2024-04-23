@@ -140,7 +140,7 @@ class Nodo
     {
         int sizeP = this->estado.size();
         cout << this->acao << " ";
-        cout << "(" << this->h << "," << this->custo << ":" << this->h + this->custo <<")" <<" ";
+        cout << "(" << this->h << "," << this->custo << ":" << this->h + this->custo <<")" <<" "<<endl;
         if(sizeP == 9){
             for(int i = 0; i < 9; i++){
                     cout << this->estado[i] << " ";
