@@ -200,51 +200,34 @@ void astar(vector<short int> init_estate)
     nos_alocados.push_back(init);
     init->distanceManhatan();
     heuristica_inicial = init->h;
-
+    media_heuristica = heuristica_inicial;
     if(init->e_Solucao()){
         delete init;
         return ;
     }
     
     fronteira.push(init);
-    explorados.insert(init->convert());
     while(!fronteira.empty()){
-    	//printf("Tamanho da fronteira: %ld\n", fronteira.size());
-    	//print_fornteira(fronteira);
+
         Nodo *atual = fronteira.top();
-        atual->distanceManhatan();
-
-        //cout << "atual" << endl;
-        //atual->printEstado();
-
         fronteira.pop();
 
-        //print_fornteira(fronteira);
-        nos_expandidos ++;
-        atual->expande(sucessores,atual,nos_alocados);
-        while(!sucessores.empty()){ 
-            sucessores.front()->distanceManhatan();
-            //cout << sucessores.front()->h << endl;
-            if(sucessores.front()->e_Solucao()){
-                solucao = sucessores.front();
-                solucao->caminho(caminho);
-                //solucao->printEstado();
-                media_heuristica += solucao->h;
-                comprimento_solução = caminho.size();
+        if(!explorados.count(atual->convert())){
+            explorados.insert(atual->convert());
+            media_heuristica += atual->h;
+            if(atual->e_Solucao()){
+                atual->caminho(caminho);
+                comprimento_solução = (caminho.size());
                 delete_nodos(nos_alocados);
                 media_heuristica = media_heuristica/nos_expandidos;
                 return ;
             }
-
-            if(!explorados.count(sucessores.front()->convert())){
-                media_heuristica += sucessores.front()->h;
-                explorados.insert(sucessores.front()->convert());
-
-                //sucessores.front()->printEstado();
-
+            nos_expandidos ++;
+            atual->expande(sucessores,atual,nos_alocados);
+            while(!sucessores.empty()){
                 fronteira.push(sucessores.front());
+                sucessores.erase(sucessores.begin());
             }
-            sucessores.erase(sucessores.begin());
         }
     }
     return ;
@@ -523,22 +506,9 @@ int main(int argc, char *argv[])
     else{
 
         cout << "algoritmo errado" << endl;
-        vector<Nodo*> sucessores;
-        vector<Nodo*> alocados;
-        priority_queue<Nodo*,vector<Nodo*>, CompareASTAR> fron;
         Nodo* novo = new Nodo(inputs[0],NULL,"",0);
-        novo->expande(sucessores,novo,alocados);
         novo->printEstado();
-        while(!sucessores.empty()){
-            cout << sucessores.front()->convert() << endl;
-            fron.push(sucessores.front());
-            sucessores.erase(sucessores.begin());
-        }
-        cout << 'o' << endl;
-        while(!fron.empty()){
-            fron.top()->printEstado();
-            fron.pop();
-        }
+        cout << novo->distanceManhatan();
 
     }
 }

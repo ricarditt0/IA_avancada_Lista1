@@ -13,11 +13,14 @@ class Nodo
     string acao;
     int custo;
     int h;
+    unsigned int id;
+
+    static unsigned int ID;
 
     Nodo(){}
 
     Nodo(const vector<short int>& estado, Nodo* pai, const string& acao, int custo)
-        : estado(estado), pai(pai), acao(acao), custo(custo) {}
+        : estado(estado), pai(pai), acao(acao), custo(custo) {id = ID ++;}
 
     int distanceManhatan(){
         int distancia = 0;
@@ -84,25 +87,25 @@ class Nodo
         if(i != 0 && i != 1 && i != 2 && this->acao.compare("baixo")){
             sucessores.push_back(new Nodo(swap(this->estado,i-3,i),pai,"cima",this->custo + 1));
             nos_alocados.push_back(sucessores.back());
-            //printf("Expandindo cima!\n");
+            sucessores.back()->distanceManhatan();
         }
 
         if(i != 0 && i != 3 && i != 6 && this->acao.compare("direita")){
             sucessores.push_back(new Nodo(swap(this->estado,i-1,i),pai,"esquerda",this->custo + 1));
             nos_alocados.push_back(sucessores.back());
-            //printf("Expandindo esquerda!\n");
+            sucessores.back()->distanceManhatan();
         }
 
         if(i != 2 && i != 5 && i != 8 && this->acao.compare("esquerda")){
             sucessores.push_back(new Nodo(swap(this->estado,i+1,i),pai,"direita",this->custo + 1));
             nos_alocados.push_back(sucessores.back());
-            //printf("Expandindo direita!\n");
+            sucessores.back()->distanceManhatan();
         }
 
         if(i != 6 && i != 7 && i != 8 && this->acao.compare("cima")){
             sucessores.push_back(new Nodo(swap(this->estado,i+3,i),pai,"baixo",this->custo + 1));
             nos_alocados.push_back(sucessores.back()); 
-            //printf("Expandindo baixo!\n");
+            sucessores.back()->distanceManhatan();
         }
     }
     // void expande16(vector<Nodo*>& sucessores,Nodo *pai,vector<Nodo*>& nos_alocados)
@@ -165,6 +168,8 @@ class Nodo
     }
 };
 
+unsigned int Nodo::ID = 0;
+
 class CompareGBFS 
 {
     public:
@@ -189,20 +194,13 @@ class CompareASTAR
 {
     public:
         bool operator()(Nodo *a,Nodo *b){
-            int f_a = a->custo + a->distanceManhatan();
-            int f_b = b->custo + b->distanceManhatan();
+            int f_a = a->custo + a->h;
+            int f_b = b->custo + b->h;
             if(f_a != f_b)
                 return f_a > f_b;
-            if(a->distanceManhatan()!= b->distanceManhatan())
-                return a->distanceManhatan() > b->distanceManhatan();
-            if(a->pai == b->pai){
-	    	    if((a->acao == "cima") | (a->acao == "esquerda" && ((b->acao == "direita") | (b->acao == "baixo"))) | (a->acao == "direita" && b->acao == "baixo"))
-		    	return true;
-		    else
-		    	return false;
-	    }
-	    else
-	    	return true;
+            if(a->h!= b->h)
+                return a->h > b->h;
+            return a->id < b->id;
         }
 };
 
