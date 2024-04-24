@@ -46,6 +46,7 @@ void print_fornteira(priority_queue<Nodo16*,vector<Nodo16*>, CompareASTAR16> fro
 
 void delete_nodos(vector<Nodo*> &nos_alocados)
 {
+    nos_alocados[0]->clear_id();
     for(int i = 0 ; i < nos_alocados.size(); i++){
         delete nos_alocados[i];
     }
@@ -127,7 +128,7 @@ void gbfs(vector<short int> init_estate)
     comprimento_solução = 0;
     media_heuristica = 0;
     unordered_set<string> explorados;
-    priority_queue<Nodo*,vector<Nodo*>, CompareGBFS> fronteira , copia;
+    priority_queue<Nodo*,vector<Nodo*>, CompareGBFS> fronteira;
     vector<Nodo*> sucessores;
     vector<Nodo*> nos_alocados;
     vector<string> caminho;
@@ -139,44 +140,34 @@ void gbfs(vector<short int> init_estate)
     nos_alocados.push_back(init);
     init->distanceManhatan();
     heuristica_inicial = init->h;
-
+    media_heuristica = heuristica_inicial;
     if(init->e_Solucao()){
         delete init;
         return ;
     }
     
     fronteira.push(init);
-    explorados.insert(init->convert());
     while(!fronteira.empty()){
-        Nodo *atual = fronteira.top();
 
-        //cin >> stop;
+        Nodo *atual = fronteira.top();
         fronteira.pop();
-        //cout << 'p' << atual->distanceManhatan() << " " << atual->custo << endl;
-        //cout << endl;
-        nos_expandidos ++;
-        //atual->printEstado();
-        //printf("Nós expandidos no momentos: %ld\n", nos_expandidos);
-        atual->expande(sucessores,atual,nos_alocados);
-        while(!sucessores.empty()){ 
-            sucessores.front()->distanceManhatan();
-            if(sucessores.front()->e_Solucao()){
-                solucao = sucessores.front();
-                solucao->caminho(caminho);
-                //solucao->printEstado();
-                media_heuristica += solucao->h;
-                comprimento_solução = caminho.size();
+
+        if(!explorados.count(atual->convert())){
+            explorados.insert(atual->convert());
+            media_heuristica += atual->h;
+            if(atual->e_Solucao()){
+                atual->caminho(caminho);
+                comprimento_solução = (caminho.size());
                 delete_nodos(nos_alocados);
                 media_heuristica = media_heuristica/nos_expandidos;
                 return ;
             }
-
-            if(!explorados.count(sucessores.front()->convert())){
-                media_heuristica += sucessores.front()->h;
-                explorados.insert(sucessores.front()->convert());
+            nos_expandidos ++;
+            atual->expande(sucessores,atual,nos_alocados);
+            while(!sucessores.empty()){
                 fronteira.push(sucessores.front());
+                sucessores.erase(sucessores.begin());
             }
-            sucessores.erase(sucessores.begin());
         }
     }
     return ;

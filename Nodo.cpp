@@ -22,6 +22,10 @@ class Nodo
     Nodo(const vector<short int>& estado, Nodo* pai, const string& acao, int custo)
         : estado(estado), pai(pai), acao(acao), custo(custo) {id = ID ++;}
 
+    void clear_id(){
+        ID = 0;
+    }
+
     int distanceManhatan(){
         int distancia = 0;
         for (int i = 0; i < 9; ++i) {
@@ -179,15 +183,8 @@ class CompareGBFS
                 }
             if(a->custo != b->custo)
                 return a->custo < b->custo;
-	    if(a->pai == b->pai){
-	    	    if((a->acao == "cima") | (a->acao == "esquerda" && ((b->acao == "direita") | (b->acao == "baixo"))) | (a->acao == "direita" && b->acao == "baixo"))
-		    	return true;
-		    else
-		    	return false;
-	    }
-	    else
-	    	return true;
-            }
+            return a->id < b->id;
+        }
 };
 
 class CompareASTAR
