@@ -174,10 +174,14 @@ class CompareGBFS
                 }
             if(a->custo != b->custo)
                 return a->custo < b->custo;
-            if((a->acao == "cima") | (a->acao == "esquerda" && ((b->acao == "direita") | (b->acao == "baixo"))) | (a->acao == "direita" && b->acao == "baixo"))
-            	return true;
-            else
-            	return false;
+	    if(a->pai == b->pai){
+	    	    if((a->acao == "cima") | (a->acao == "esquerda" && ((b->acao == "direita") | (b->acao == "baixo"))) | (a->acao == "direita" && b->acao == "baixo"))
+		    	return true;
+		    else
+		    	return false;
+	    }
+	    else
+	    	return true;
             }
 };
 
@@ -191,10 +195,14 @@ class CompareASTAR
                 return f_a > f_b;
             if(a->distanceManhatan()!= b->distanceManhatan())
                 return a->distanceManhatan() > b->distanceManhatan();
-            if((a->acao == "cima") | (a->acao == "esquerda" && ((b->acao == "direita") | (b->acao == "baixo"))) | (a->acao == "direita" && b->acao == "baixo"))
-            	return true;
-            else
-            	return false;
+            if(a->pai == b->pai){
+	    	    if((a->acao == "cima") | (a->acao == "esquerda" && ((b->acao == "direita") | (b->acao == "baixo"))) | (a->acao == "direita" && b->acao == "baixo"))
+		    	return true;
+		    else
+		    	return false;
+	    }
+	    else
+	    	return true;
         }
 };
 
@@ -297,13 +305,13 @@ class CompareASTAR16
 {
     public:
         bool operator()(Nodo16 *a,Nodo16 *b){
-            int f_a = a->h + a->g;
-            int f_b = b->h + b->g; 
-
+            int f_a = a->g + a->distanceManhatan();
+            int f_b = b->g + b->distanceManhatan();
             if(f_a != f_b)
                 return f_a > f_b;
-            if(a->h!= b->h)
-                return a->h > b->h;
-            return true;
+            if(a->distanceManhatan()!= b->distanceManhatan())
+                return a->distanceManhatan() > b->distanceManhatan();
+            else
+            	return true;
         }
 };
