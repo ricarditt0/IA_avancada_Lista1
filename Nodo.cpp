@@ -5,6 +5,10 @@
 
 using namespace std;
 
+long int nos_expandidos = 0;
+double media_heuristica = 0;
+int media_count = 0;
+
 class Nodo
 {
     public:
@@ -27,6 +31,7 @@ class Nodo
     }
 
     int distanceManhatan(){
+        media_count ++;
         int distancia = 0;
         for (int i = 0; i < 9; ++i) {
             if (estado[i]) {
@@ -37,21 +42,22 @@ class Nodo
             }
         }
         this->h = distancia;
+        media_heuristica += distancia;
     	return distancia;
     }
-    // int distanceManhatan16(){
-    //     int distancia = 0;
-    //     for (int i = 0; i < 16; ++i) {
-    //         if (estado[i]) {
-    //             int val = estado[i];
-    //             int rowDistance = std::abs((val) % 4 - static_cast<int>(i % 4));
-    //             int colDistance = std::abs((val) / 4 - static_cast<int>(i / 4));
-    //             distancia += rowDistance + colDistance;
-    //         }
-    //     }
-    //     this->h = distancia;
-    // 	return distancia;
-    // }
+    int distanceManhatan16(){
+        int distancia = 0;
+        for (int i = 0; i < 16; ++i) {
+            if (estado[i]) {
+                int val = estado[i];
+                int rowDistance = std::abs((val) % 4 - static_cast<int>(i % 4));
+                int colDistance = std::abs((val) / 4 - static_cast<int>(i / 4));
+                distancia += rowDistance + colDistance;
+            }
+        }
+        this->h = distancia;
+    	return distancia;
+    }
 
 
     string convert()
@@ -83,6 +89,7 @@ class Nodo
 
     void expande(vector<Nodo*>& sucessores,Nodo *pai,vector<Nodo*>& nos_alocados)
     {
+        nos_expandidos++;
         int i = 0;
         int custo = 0;
         while (this->estado[i] != 0)
@@ -112,33 +119,38 @@ class Nodo
             sucessores.back()->distanceManhatan();
         }
     }
-    // void expande16(vector<Nodo*>& sucessores,Nodo *pai,vector<Nodo*>& nos_alocados)
-    // {
-    //     int i = 0;
-    //     int custo = 0;
-    //     while (this->estado[i] != 0)
-    //         i ++;
+    void expande16(vector<Nodo*>& sucessores,Nodo *pai,vector<Nodo*>& nos_alocados)
+    {
+        int i = 0;
+        int custo = 0;
+        while (this->estado[i] != 0)
+            i ++;
 
-    //     if(i != 0 && i != 1 && i != 2 && i != 3 && this->acao.compare("baixo")){
-    //         sucessores.push_back(new Nodo(swap(this->estado,i-4,i),pai,"cima",this->custo + 1));
-    //         nos_alocados.push_back(sucessores.back());
-    //     }
+        if(i != 0 && i != 1 && i != 2 && i != 3 && this->acao.compare("baixo")){
+            sucessores.push_back(new Nodo(swap(this->estado,i-4,i),pai,"cima",this->custo + 1));
+            nos_alocados.push_back(sucessores.back());
+            sucessores.back()->distanceManhatan16();
+        }
 
-    //     if(i != 0 && i != 4 && i != 8 && i != 12 && this->acao.compare("direita")){
-    //         sucessores.push_back(new Nodo(swap(this->estado,i-1,i),pai,"esquerda",this->custo + 1));
-    //         nos_alocados.push_back(sucessores.back());
-    //     }
+        if(i != 0 && i != 4 && i != 8 && i != 12 && this->acao.compare("direita")){
+            sucessores.push_back(new Nodo(swap(this->estado,i-1,i),pai,"esquerda",this->custo + 1));
+            nos_alocados.push_back(sucessores.back());
+            sucessores.back()->distanceManhatan16();
 
-    //     if(i != 3 && i != 7 && i != 11 && i != 15 && this->acao.compare("esquerda")){
-    //         sucessores.push_back(new Nodo(swap(this->estado,i+1,i),pai,"direita",this->custo + 1));
-    //         nos_alocados.push_back(sucessores.back());
-    //     }
+        }
 
-    //     if(i != 12 && i != 13 && i != 14 && i != 15 && this->acao.compare("cima")){
-    //         sucessores.push_back(new Nodo(swap(this->estado,i+4,i),pai,"baixo",this->custo + 1));
-    //         nos_alocados.push_back(sucessores.back()); 
-    //     }
-    // }
+        if(i != 3 && i != 7 && i != 11 && i != 15 && this->acao.compare("esquerda")){
+            sucessores.push_back(new Nodo(swap(this->estado,i+1,i),pai,"direita",this->custo + 1));
+            nos_alocados.push_back(sucessores.back());
+            sucessores.back()->distanceManhatan16();
+        }
+
+        if(i != 12 && i != 13 && i != 14 && i != 15 && this->acao.compare("cima")){
+            sucessores.push_back(new Nodo(swap(this->estado,i+4,i),pai,"baixo",this->custo + 1));
+            nos_alocados.push_back(sucessores.back()); 
+            sucessores.back()->distanceManhatan16();
+        }
+    }
 
     void caminho(vector<string> &caminho){
         if(this->pai){
@@ -178,8 +190,8 @@ class CompareGBFS
 {
     public:
         bool operator()(Nodo *a, Nodo *b){
-            if(a->distanceManhatan()!= b->distanceManhatan()){
-                return a->distanceManhatan() > b->distanceManhatan();
+            if(a->h!= b->h){
+                return a->h > b->h;
                 }
             if(a->custo != b->custo)
                 return a->custo < b->custo;
@@ -209,11 +221,16 @@ class Nodo16
     char acao;
     int g;
     int h;
+    //unsigned long int id;
+
+    //static unsigned long int ID;
 
     Nodo16(){}
 
     Nodo16(const vector<char> &estado,Nodo16 *pai,char acao,int g)
-        :estado(estado),pai(pai),acao(acao),g(g){}
+        :estado(estado),pai(pai),acao(acao),g(g){
+            //id = ID ++;
+            }
 
     vector<char> swap(int index_alvo, int index_vazio)
     {
@@ -222,6 +239,10 @@ class Nodo16
         new_estate[index_alvo] = char(0);
         return new_estate;
     }
+
+    // void clear_id(){
+    //     ID = 0;
+    // }
 
     void expande(vector<Nodo16*>& sucessores,Nodo16 *pai,vector<Nodo16*>& nos_alocados)
     {
@@ -296,17 +317,17 @@ class Nodo16
 
 };
 
+
 class CompareASTAR16
 {
     public:
         bool operator()(Nodo16 *a,Nodo16 *b){
-            int f_a = a->g + a->distanceManhatan();
-            int f_b = b->g + b->distanceManhatan();
+            int f_a = a->g + a->h;
+            int f_b = b->g + b->h;
             if(f_a != f_b)
                 return f_a > f_b;
-            if(a->distanceManhatan()!= b->distanceManhatan())
-                return a->distanceManhatan() > b->distanceManhatan();
-            else
-            	return true;
+            if(a->h!= b->h)
+                return a->h > b->h;
+            return false;
         }
 };
