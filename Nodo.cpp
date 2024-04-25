@@ -221,15 +221,15 @@ class Nodo16
     char acao;
     int g;
     int h;
-    //unsigned long int id;
+    unsigned long int id;
 
-    //static unsigned long int ID;
+    static unsigned long int ID;
 
     Nodo16(){}
 
     Nodo16(const vector<char> &estado,Nodo16 *pai,char acao,int g)
         :estado(estado),pai(pai),acao(acao),g(g){
-            //id = ID ++;
+            id = ID ++;
             }
 
     vector<char> swap(int index_alvo, int index_vazio)
@@ -240,12 +240,20 @@ class Nodo16
         return new_estate;
     }
 
-    // void clear_id(){
-    //     ID = 0;
-    // }
+    void clear_id(){
+        ID = 0;
+    }
+
+    void caminho(string &caminho){
+        if(this->pai){
+            caminho.push_back((this->acao));
+            this->pai->caminho(caminho);
+        }
+    }
 
     void expande(vector<Nodo16*>& sucessores,Nodo16 *pai,vector<Nodo16*>& nos_alocados)
     {
+        nos_expandidos ++;
         int i = 0;
         int custo = 0;
         while (this->estado[i] != char(0))
@@ -255,20 +263,24 @@ class Nodo16
         if(i != 0 && i != 1 && i != 2 && i != 3 && this->acao != 'b'){
             sucessores.push_back(new Nodo16(this->swap(i-4,i),pai,'c',this->g++));
             nos_alocados.push_back(sucessores.back());
+            sucessores.back()->distanceManhatan();
         }
 
         if(i != 0 && i != 4 && i != 8 && i != 12 && this->acao != 'd'){
             sucessores.push_back(new Nodo16(this->swap(i-1,i),pai,'e',this->g++));
             nos_alocados.push_back(sucessores.back());
+            sucessores.back()->distanceManhatan();
         }
 
         if(i != 3 && i != 7 && i != 11 && i != 15 && this->acao != 'e'){
             sucessores.push_back(new Nodo16(this->swap(i+1,i),pai,'d',this->g++));
             nos_alocados.push_back(sucessores.back());
+            sucessores.back()->distanceManhatan();
         }
         if(i != 12 && i != 13 && i != 14 && i != 15 && this->acao != 'c'){
             sucessores.push_back(new Nodo16(this->swap(i+4,i),pai,'b',this->g++));
             nos_alocados.push_back(sucessores.back());
+            sucessores.back()->distanceManhatan();
         }
     }
 
@@ -283,6 +295,7 @@ class Nodo16
     }
 
     int distanceManhatan(){
+        media_count ++;
         int distancia = 0;
         for (int i = 0; i < 16; ++i) {
             if (int(estado[i])) {
@@ -293,6 +306,7 @@ class Nodo16
             }
         }
         this->h = distancia;
+        media_heuristica += distancia;
     	return distancia;
     }
 
@@ -317,6 +331,7 @@ class Nodo16
 
 };
 
+unsigned long int Nodo16::ID = 0;
 
 class CompareASTAR16
 {
@@ -328,6 +343,6 @@ class CompareASTAR16
                 return f_a > f_b;
             if(a->h!= b->h)
                 return a->h > b->h;
-            return false;
+            return a->id < b->id;
         }
 };
