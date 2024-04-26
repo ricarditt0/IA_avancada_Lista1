@@ -47,6 +47,7 @@ class Nodo
     }
     int distanceManhatan16(){
         int distancia = 0;
+        media_count ++;
         for (int i = 0; i < 16; ++i) {
             if (estado[i]) {
                 int val = estado[i];
@@ -56,6 +57,7 @@ class Nodo
             }
         }
         this->h = distancia;
+        media_heuristica += distancia;
     	return distancia;
     }
 
@@ -64,7 +66,7 @@ class Nodo
     {
         std::string s;
         for (int elem : this->estado) {
-                s = s + std::to_string(elem);
+                s = s + "," + std::to_string(elem);
             }
         return s;
     }
@@ -121,6 +123,7 @@ class Nodo
     }
     void expande16(vector<Nodo*>& sucessores,Nodo *pai,vector<Nodo*>& nos_alocados)
     {
+        nos_expandidos ++;
         int i = 0;
         int custo = 0;
         while (this->estado[i] != 0)
@@ -324,7 +327,7 @@ class Nodo16
     {
         std::string s;
         for (char elem : this->estado) {
-                s = s + std::to_string(elem);
+                s = s + "," + std::to_string(elem);
             }
         return s;
     }

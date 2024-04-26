@@ -272,56 +272,55 @@ void astar16(vector<char> init_estate)
     return ;
 }
 
-// void astar16(vector<short int> init_estate)
-// {
-//     nos_expandidos = 0;
-//     comprimento_solução = 0;
-//     media_heuristica = 0;
-//     unordered_set<string> explorados;
-//     priority_queue<Nodo*,vector<Nodo*>, CompareASTAR> fronteira;
-//     vector<Nodo*> sucessores;
-//     vector<Nodo*> nos_alocados;
-//     vector<string> caminho;
-//     Nodo* solucao;
+void astar16(vector<short int> init_estate)
+{
+    nos_expandidos = 0;
+    comprimento_solução = 0;
+    media_heuristica = 0;
+    media_count = 0;
 
-//     int stop = 0;
+    unordered_set<string> explorados;
+    priority_queue<Nodo*,vector<Nodo*>, CompareASTAR> fronteira;
+    vector<Nodo*> sucessores;
+    vector<Nodo*> nos_alocados;
+    vector<string> caminho;
+    Nodo* solucao;
 
-//     Nodo *init = new Nodo (init_estate,NULL,"",0);
-//     nos_alocados.push_back(init);
-//     init->distanceManhatan16();
-//     heuristica_inicial = init->h;
-//     media_heuristica = heuristica_inicial;
-//     if(init->e_Solucao()){
-//         delete init;
-//         return ;
-//     }
+    int stop = 0;
+
+    Nodo *init = new Nodo (init_estate,NULL,"",0);
+    nos_alocados.push_back(init);
+    init->distanceManhatan16();
+    heuristica_inicial = init->h;
+    if(init->e_Solucao()){
+        delete init;
+        return ;
+    }
     
-//     fronteira.push(init);
-//     while(!fronteira.empty()){
+    fronteira.push(init);
+    while(!fronteira.empty()){
 
-//         Nodo *atual = fronteira.top();
-//         fronteira.pop();
+        Nodo *atual = fronteira.top();
+        fronteira.pop();
 
-//         if(!explorados.count(atual->convert())){
-//             explorados.insert(atual->convert());
-//             media_heuristica += atual->h;
-//             if(atual->e_Solucao()){
-//                 atual->caminho(caminho);
-//                 comprimento_solução = (caminho.size());
-//                 delete_nodos(nos_alocados);
-//                 media_heuristica = media_heuristica/nos_expandidos;
-//                 return ;
-//             }
-//             nos_expandidos ++;
-//             atual->expande16(sucessores,atual,nos_alocados);
-//             while(!sucessores.empty()){
-//                 fronteira.push(sucessores.front());
-//                 sucessores.erase(sucessores.begin());
-//             }
-//         }
-//     }
-//     return ;
-// }
+        if(!explorados.count(atual->convert())){
+            explorados.insert(atual->convert());
+            if(atual->e_Solucao()){
+                atual->caminho(caminho);
+                comprimento_solução = (caminho.size());
+                delete_nodos(nos_alocados);
+                media_heuristica = media_heuristica/media_count;
+                return ;
+            }
+            atual->expande16(sucessores,atual,nos_alocados);
+            while(!sucessores.empty()){
+                fronteira.push(sucessores.front());
+                sucessores.erase(sucessores.begin());
+            }
+        }
+    }
+    return ;
+}
 
 Nodo* dls(vector<Nodo*> &nos_alocados,Nodo* atual, int depth_Limit)
 {
@@ -380,8 +379,7 @@ Nodo* idastar_aux(vector<Nodo*> &nos_alocados,Nodo* atual, int f_limit, int& ret
     if((atual->custo + atual->h) > f_limit){
     	retorno_limit = atual->custo + atual->h;
     	return NULL;
-    }
-    
+    } 
     
     if(atual->e_Solucao()){
         retorno_limit = numeric_limits<int>::max();
@@ -391,10 +389,9 @@ Nodo* idastar_aux(vector<Nodo*> &nos_alocados,Nodo* atual, int f_limit, int& ret
     int next_limit = numeric_limits<int>::max();
     int rec_limit = numeric_limits<int>::max();
     atual->expande(sucessores,atual,nos_alocados);
-    int tamanho = sucessores.size();
-    while(!sucessores.empty()){
-            Nodo *new_nodo = sucessores.front();
-            sucessores.erase(sucessores.begin());
+    comprimento_solução += sucessores.size();
+    for(int i = 0; i < sucessores.size();i++){
+            Nodo *new_nodo = sucessores[i];
             if(new_nodo->h < numeric_limits<int>::max()){
             	solucao = idastar_aux(nos_alocados, new_nodo, f_limit, rec_limit);
             	if(solucao != NULL){
@@ -482,7 +479,6 @@ int main(int argc, char *argv[])
                 for(int j = 0; j<16;j++){
                     ini_state.push_back(char(inputs[i][j]));
                 }
-                // cout << inputs.size() << endl;
                 chrono::system_clock::time_point t = chrono::system_clock::now();
                 ios_base::sync_with_stdio(false); 
                 astar16(ini_state);
