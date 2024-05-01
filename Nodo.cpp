@@ -1,3 +1,10 @@
+/*
+    Este arquivo contém a descrição das classes usadas no arquivo principal. 
+    A classe 'Nodo' é utilizada para as versões 8-puzzle, enquanto a classe 'Nodo16' é 
+    utilizada para a versão 15-puzzle. As classes 'Compare' são utilizadas para decidir 
+    a ordem das filas de prioridade.
+*/
+
 #include<vector>
 #include<string>
 #include<iostream>
@@ -45,22 +52,6 @@ class Nodo
         media_heuristica += distancia;
     	return distancia;
     }
-    int distanceManhatan16(){
-        int distancia = 0;
-        media_count ++;
-        for (int i = 0; i < 16; ++i) {
-            if (estado[i]) {
-                int val = estado[i];
-                int rowDistance = std::abs((val) % 4 - static_cast<int>(i % 4));
-                int colDistance = std::abs((val) / 4 - static_cast<int>(i / 4));
-                distancia += rowDistance + colDistance;
-            }
-        }
-        this->h = distancia;
-        media_heuristica += distancia;
-    	return distancia;
-    }
-
 
     string convert()
     {
@@ -119,39 +110,6 @@ class Nodo
             sucessores.push_back(new Nodo(swap(this->estado,i+3,i),pai,"baixo",this->custo + 1));
             nos_alocados.push_back(sucessores.back()); 
             sucessores.back()->distanceManhatan();
-        }
-    }
-    void expande16(vector<Nodo*>& sucessores,Nodo *pai,vector<Nodo*>& nos_alocados)
-    {
-        nos_expandidos ++;
-        int i = 0;
-        int custo = 0;
-        while (this->estado[i] != 0)
-            i ++;
-
-        if(i != 0 && i != 1 && i != 2 && i != 3 && this->acao.compare("baixo")){
-            sucessores.push_back(new Nodo(swap(this->estado,i-4,i),pai,"cima",this->custo + 1));
-            nos_alocados.push_back(sucessores.back());
-            sucessores.back()->distanceManhatan16();
-        }
-
-        if(i != 0 && i != 4 && i != 8 && i != 12 && this->acao.compare("direita")){
-            sucessores.push_back(new Nodo(swap(this->estado,i-1,i),pai,"esquerda",this->custo + 1));
-            nos_alocados.push_back(sucessores.back());
-            sucessores.back()->distanceManhatan16();
-
-        }
-
-        if(i != 3 && i != 7 && i != 11 && i != 15 && this->acao.compare("esquerda")){
-            sucessores.push_back(new Nodo(swap(this->estado,i+1,i),pai,"direita",this->custo + 1));
-            nos_alocados.push_back(sucessores.back());
-            sucessores.back()->distanceManhatan16();
-        }
-
-        if(i != 12 && i != 13 && i != 14 && i != 15 && this->acao.compare("cima")){
-            sucessores.push_back(new Nodo(swap(this->estado,i+4,i),pai,"baixo",this->custo + 1));
-            nos_alocados.push_back(sucessores.back()); 
-            sucessores.back()->distanceManhatan16();
         }
     }
 
