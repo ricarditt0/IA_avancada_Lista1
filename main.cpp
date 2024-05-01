@@ -277,56 +277,6 @@ void astar16(vector<char> init_estate)
     return ;
 }
 
-// void astar16(vector<short int> init_estate)
-// {
-//     nos_expandidos = 0;
-//     comprimento_solução = 0;
-//     media_heuristica = 0;
-//     media_count = 0;
-
-//     unordered_set<string> explorados;
-//     priority_queue<Nodo*,vector<Nodo*>, CompareASTAR> fronteira;
-//     vector<Nodo*> sucessores;
-//     vector<Nodo*> nos_alocados;
-//     vector<string> caminho;
-//     Nodo* solucao;
-
-//     int stop = 0;
-
-//     Nodo *init = new Nodo (init_estate,NULL,"",0);
-//     nos_alocados.push_back(init);
-//     init->distanceManhatan16();
-//     heuristica_inicial = init->h;
-//     if(init->e_Solucao()){
-//         delete init;
-//         return ;
-//     }
-    
-//     fronteira.push(init);
-//     while(!fronteira.empty()){
-
-//         Nodo *atual = fronteira.top();
-//         fronteira.pop();
-
-//         if(!explorados.count(atual->convert())){
-//             explorados.insert(atual->convert());
-//             if(atual->e_Solucao()){
-//                 atual->caminho(caminho);
-//                 comprimento_solução = (caminho.size());
-//                 delete_nodos(nos_alocados);
-//                 media_heuristica = media_heuristica/media_count;
-//                 return ;
-//             }
-//             atual->expande16(sucessores,atual,nos_alocados);
-//             while(!sucessores.empty()){
-//                 fronteira.push(sucessores.front());
-//                 sucessores.erase(sucessores.begin());
-//             }
-//         }
-//     }
-//     return ;
-// }
-
 Nodo* dls(vector<Nodo*> &nos_alocados,Nodo* atual, int depth_Limit)
 {
     vector<Nodo*> sucessores;
