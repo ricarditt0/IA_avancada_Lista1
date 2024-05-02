@@ -239,7 +239,7 @@ void astar16(vector<char> init_estate)
 
     unordered_set<string> explorados;
     priority_queue<Nodo16*,vector<Nodo16*>, CompareASTAR16> fronteira;
-    vector<Nodo16*> sucessores;
+    Nodo16* sucessores[4];
     vector<Nodo16*> nos_alocados;
     string caminho;
 
@@ -263,6 +263,7 @@ void astar16(vector<char> init_estate)
             comprimento_solução = 0;
             media_heuristica = 0;
             media_count = 0;
+            heuristica_inicial = 0;
             delete_nodos(nos_alocados);
             return;
         }
@@ -280,9 +281,11 @@ void astar16(vector<char> init_estate)
                 return ;
             }
             atual->expande(sucessores,atual,nos_alocados);
-            while(!sucessores.empty()){
-                fronteira.push(sucessores.front());
-                sucessores.erase(sucessores.begin());
+            for(int i = 0 ;i<4;i++){
+                if(sucessores[i] != NULL){
+                    fronteira.push(sucessores[i]);
+                    sucessores[i] == NULL;
+                }
             }
         }
     }

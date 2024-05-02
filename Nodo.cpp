@@ -212,7 +212,7 @@ class Nodo16
         }
     }
 
-    void expande(vector<Nodo16*>& sucessores,Nodo16 *pai,vector<Nodo16*>& nos_alocados)
+    void expande(Nodo16* sucessores[4],Nodo16 *pai,vector<Nodo16*>& nos_alocados)
     {
         nos_expandidos ++;
         int i = 0;
@@ -222,27 +222,40 @@ class Nodo16
 
        
         if(i != 0 && i != 1 && i != 2 && i != 3 && this->acao != 'b'){
-            sucessores.push_back(new Nodo16(this->swap(i-4,i),pai,'c',this->g + 1));
-            nos_alocados.push_back(sucessores.back());
-            sucessores.back()->distanceManhatan();
+            Nodo16 *novo = new Nodo16(this->swap(i-4,i),pai,'c',this->g + 1);
+            sucessores[0] = novo;
+            nos_alocados.push_back(sucessores[0]);
+            sucessores[0]->distanceManhatan();
         }
+        else
+            sucessores[0] = NULL;
 
         if(i != 0 && i != 4 && i != 8 && i != 12 && this->acao != 'd'){
-            sucessores.push_back(new Nodo16(this->swap(i-1,i),pai,'e',this->g + 1));
-            nos_alocados.push_back(sucessores.back());
-            sucessores.back()->distanceManhatan();
+            Nodo16 *novo = (new Nodo16(this->swap(i-1,i),pai,'e',this->g + 1));
+            sucessores[1] = novo;
+            nos_alocados.push_back(sucessores[1]);
+            sucessores[1]->distanceManhatan();
         }
+        else
+            sucessores[1] = NULL;
 
         if(i != 3 && i != 7 && i != 11 && i != 15 && this->acao != 'e'){
-            sucessores.push_back(new Nodo16(this->swap(i+1,i),pai,'d',this->g + 1));
-            nos_alocados.push_back(sucessores.back());
-            sucessores.back()->distanceManhatan();
+            Nodo16 *novo = (new Nodo16(this->swap(i+1,i),pai,'d',this->g + 1));
+            sucessores[2] = novo;
+            nos_alocados.push_back(sucessores[2]);
+            sucessores[2]->distanceManhatan();
         }
+        else
+            sucessores[2] = NULL;
+
         if(i != 12 && i != 13 && i != 14 && i != 15 && this->acao != 'c'){
-            sucessores.push_back(new Nodo16(this->swap(i+4,i),pai,'b',this->g + 1));
-            nos_alocados.push_back(sucessores.back());
-            sucessores.back()->distanceManhatan();
+            Nodo16 *novo = (new Nodo16(this->swap(i+4,i),pai,'b',this->g + 1));
+            sucessores[3] = novo;
+            nos_alocados.push_back(sucessores[3]);
+            sucessores[3]->distanceManhatan();
         }
+        else
+            sucessores[3] = NULL;
     }
 
     bool e_Solucao()
