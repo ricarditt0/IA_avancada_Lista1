@@ -18,6 +18,8 @@ using namespace std;
 
 int comprimento_solução = 0;
 int heuristica_inicial = 0;
+auto inicio = std::chrono::high_resolution_clock::now();
+auto resultado = std::chrono::high_resolution_clock::now() - inicio;
 
 void print_fornteira(priority_queue<Nodo*,vector<Nodo*>, CompareASTAR> fronteira){
     priority_queue<Nodo*,vector<Nodo*>, CompareASTAR> copia = fronteira;
@@ -254,6 +256,16 @@ void astar16(vector<char> init_estate)
     
     fronteira.push(init);
     while(!fronteira.empty()){
+        
+        resultado = std::chrono::high_resolution_clock::now() - inicio;
+        if(((std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9)) > 30.00 ){
+            nos_expandidos = 0;
+            comprimento_solução = 0;
+            media_heuristica = 0;
+            media_count = 0;
+            delete_nodos(nos_alocados);
+            return;
+        }
 
         Nodo16 *atual = fronteira.top();
         fronteira.pop();
@@ -403,9 +415,9 @@ int main(int argc, char *argv[])
     if(!(algorithm.compare("-bfs"))){
         for(int i = 0;i<inputs.size();i++){
 
-            auto inicio = std::chrono::high_resolution_clock::now();
+            inicio = std::chrono::high_resolution_clock::now();
             bfs(inputs[i]);
-            auto resultado = std::chrono::high_resolution_clock::now() - inicio;
+            resultado = std::chrono::high_resolution_clock::now() - inicio;
             cout << nos_expandidos << ',';
             cout << comprimento_solução << ',';
             cout << (std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9) <<',' ;
@@ -419,9 +431,9 @@ int main(int argc, char *argv[])
         for(int i = 0;i<inputs.size();i++){
 
             if(inputs[0].size() == 9){
-                auto inicio = std::chrono::high_resolution_clock::now();
+                inicio = std::chrono::high_resolution_clock::now();
                 astar(inputs[i]);
-                auto resultado = std::chrono::high_resolution_clock::now() - inicio;
+                resultado = std::chrono::high_resolution_clock::now() - inicio;
                 cout << nos_expandidos << ',';
                 cout << comprimento_solução << ',';
                 cout << (std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9) <<',' ;
@@ -434,9 +446,9 @@ int main(int argc, char *argv[])
                 for(int j = 0; j<16;j++){
                     ini_state.push_back(char(inputs[i][j]));
                 }
-                auto inicio = std::chrono::high_resolution_clock::now();
+                inicio = std::chrono::high_resolution_clock::now();
                 astar16(ini_state);
-                auto resultado = std::chrono::high_resolution_clock::now() - inicio;
+                resultado = std::chrono::high_resolution_clock::now() - inicio;
                 cout << nos_expandidos << ',';
                 cout << comprimento_solução << ',';
                 cout << (std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9) <<',' ;
@@ -448,9 +460,9 @@ int main(int argc, char *argv[])
     }
     else if(!(algorithm.compare("-idastar"))){
           for(int i = 0;i<inputs.size();i++){
-            auto inicio = std::chrono::high_resolution_clock::now();
+            inicio = std::chrono::high_resolution_clock::now();
         	idastar(inputs[i]);
-            auto resultado = std::chrono::high_resolution_clock::now() - inicio;
+            resultado = std::chrono::high_resolution_clock::now() - inicio;
          	cout << nos_expandidos << ',';
          	cout << comprimento_solução << ',';
             cout << (std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9) <<',' ;
@@ -461,9 +473,9 @@ int main(int argc, char *argv[])
     else if(!(algorithm.compare("-idfs"))){
          for(int i = 0;i<inputs.size();i++){
 
-            auto inicio = std::chrono::high_resolution_clock::now();
+            inicio = std::chrono::high_resolution_clock::now();
             idfs(inputs[i]);
-            auto resultado = std::chrono::high_resolution_clock::now() - inicio;
+            resultado = std::chrono::high_resolution_clock::now() - inicio;
             cout << nos_expandidos << ',';
             cout << comprimento_solução << ',';
             cout << (std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9) <<',' ;
@@ -475,9 +487,9 @@ int main(int argc, char *argv[])
     else if(!(algorithm.compare("-gbfs"))){
         for(int i = 0;i<inputs.size();i++){
 
-            auto inicio = std::chrono::high_resolution_clock::now();
+            inicio = std::chrono::high_resolution_clock::now();
             gbfs(inputs[i]);
-            auto resultado = std::chrono::high_resolution_clock::now() - inicio;
+            resultado = std::chrono::high_resolution_clock::now() - inicio;
             cout << nos_expandidos << ',';
             cout << comprimento_solução << ',';
             cout << (std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9) <<',' ;
