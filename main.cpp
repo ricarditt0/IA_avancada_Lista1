@@ -16,7 +16,7 @@
 
 using namespace std;
 
-int comprimento_solução = 0;
+int comprimento_solucao = 0;
 int heuristica_inicial = 0;
 auto inicio = std::chrono::high_resolution_clock::now();
 auto resultado = std::chrono::high_resolution_clock::now() - inicio;
@@ -90,7 +90,7 @@ void bfs(vector<short int> init_estate)
     media_count = 0;
     media_heuristica = 0;
     nos_expandidos = 0;
-    comprimento_solução = 0;
+    comprimento_solucao = 0;
 
     unordered_set<string> explorados;
     queue<Nodo*> fronteira;
@@ -117,7 +117,7 @@ void bfs(vector<short int> init_estate)
             if(sucessores.front()->e_Solucao()){
                 solucao = sucessores.front();
                 solucao->caminho(caminho);
-                comprimento_solução = caminho.size();
+                comprimento_solucao = caminho.size();
                 media_heuristica = 0;
                 //resultado = std::chrono::high_resolution_clock::now() - inicio;
                 delete_nodos(nos_alocados);
@@ -139,7 +139,7 @@ void gbfs(vector<short int> init_estate)
     media_heuristica = 0;
     media_count = 0;
     nos_expandidos = 0;
-    comprimento_solução = 0;
+    comprimento_solucao = 0;
 
     unordered_set<string> explorados;
     priority_queue<Nodo*,vector<Nodo*>, CompareGBFS> fronteira;
@@ -169,7 +169,7 @@ void gbfs(vector<short int> init_estate)
             explorados.insert(atual->convert());
             if(atual->e_Solucao()){
                 atual->caminho(caminho);
-                comprimento_solução = (caminho.size());
+                comprimento_solucao = (caminho.size());
                 media_heuristica = media_heuristica/media_count;
                 //resultado = std::chrono::high_resolution_clock::now() - inicio;
                 delete_nodos(nos_alocados);
@@ -188,7 +188,7 @@ void gbfs(vector<short int> init_estate)
 void astar(vector<short int> init_estate)
 {
     nos_expandidos = 0;
-    comprimento_solução = 0;
+    comprimento_solucao = 0;
     media_heuristica = 0;
     media_count = 0;
 
@@ -220,7 +220,7 @@ void astar(vector<short int> init_estate)
             explorados.insert(atual->convert());
             if(atual->e_Solucao()){
                 atual->caminho(caminho);
-                comprimento_solução = (caminho.size());
+                comprimento_solucao = (caminho.size());
                 media_heuristica = media_heuristica/media_count;
                 //resultado = std::chrono::high_resolution_clock::now() - inicio;
                 delete_nodos(nos_alocados);
@@ -240,7 +240,7 @@ void astar(vector<short int> init_estate)
 void astar16(vector<char> init_estate)
 {
     nos_expandidos = 0;
-    comprimento_solução = 0;
+    comprimento_solucao = 0;
     media_heuristica = 0;
     media_count = 0;
 
@@ -267,7 +267,7 @@ void astar16(vector<char> init_estate)
         resultado = std::chrono::high_resolution_clock::now() - inicio;
         if(((std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9)) > 30.00 ){
             nos_expandidos = 0;
-            comprimento_solução = 0;
+            comprimento_solucao = 0;
             media_heuristica = 0;
             media_count = 0;
             heuristica_inicial = 0;
@@ -282,7 +282,7 @@ void astar16(vector<char> init_estate)
             explorados.insert(atual->convert());
             if(atual->e_Solucao()){
                 atual->caminho(caminho);
-                comprimento_solução = caminho.length();
+                comprimento_solucao = caminho.length();
                 media_heuristica = media_heuristica/media_count;
                 //resultado = std::chrono::high_resolution_clock::now() - inicio;
                 delete_nodos(nos_alocados);
@@ -323,7 +323,7 @@ Nodo* dls(vector<Nodo*> &nos_alocados,Nodo* atual, int depth_Limit)
 void idfs(vector<short int> init_estate)
 {
     nos_expandidos = 0;
-    comprimento_solução = 0;
+    comprimento_solucao = 0;
     media_heuristica = 0;
     media_count = 0;
 
@@ -340,7 +340,7 @@ void idfs(vector<short int> init_estate)
         solucao = dls(nos_alocados,init,i);
         if(solucao != NULL){
             solucao->caminho(caminho);
-            comprimento_solução = caminho.size();
+            comprimento_solucao = caminho.size();
             media_heuristica = 0;
             //resultado = std::chrono::high_resolution_clock::now() - inicio;
             delete_nodos(nos_alocados);
@@ -368,7 +368,7 @@ Nodo* idastar_aux(vector<Nodo*> &nos_alocados,Nodo* atual, int f_limit, int& ret
     int next_limit = numeric_limits<int>::max();
     int rec_limit = numeric_limits<int>::max();
     atual->expande(sucessores,atual,nos_alocados);
-    comprimento_solução += sucessores.size();
+    comprimento_solucao += sucessores.size();
     for(int i = 0; i < sucessores.size();i++){
             Nodo *new_nodo = sucessores[i];
             if(new_nodo->h < numeric_limits<int>::max()){
@@ -386,7 +386,7 @@ Nodo* idastar_aux(vector<Nodo*> &nos_alocados,Nodo* atual, int f_limit, int& ret
 
 void idastar(vector<short int> init_estate)	{
     nos_expandidos = 0;
-    comprimento_solução = 0;
+    comprimento_solucao = 0;
     media_heuristica = 0;
     media_count = 0;
 
@@ -405,7 +405,7 @@ void idastar(vector<short int> init_estate)	{
     	solucao = idastar_aux(nos_alocados, init, f_limit, f_limit);
         if(solucao != NULL){
             solucao->caminho(caminho);
-            comprimento_solução = caminho.size();
+            comprimento_solucao = caminho.size();
             media_heuristica = media_heuristica/media_count;
             //resultado = std::chrono::high_resolution_clock::now() - inicio;
             delete_nodos(nos_alocados);
@@ -432,7 +432,7 @@ int main(int argc, char *argv[])
             bfs(inputs[i]);
             //resultado = std::chrono::high_resolution_clock::now() - inicio;
             cout << nos_expandidos << ',';
-            cout << comprimento_solução << ',';
+            cout << comprimento_solucao << ',';
             cout << (std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9) <<',' ;
             cout << media_heuristica << ',';
             cout << heuristica_inicial << endl;
@@ -448,7 +448,7 @@ int main(int argc, char *argv[])
                 astar(inputs[i]);
                 //resultado = std::chrono::high_resolution_clock::now() - inicio;
                 cout << nos_expandidos << ',';
-                cout << comprimento_solução << ',';
+                cout << comprimento_solucao << ',';
                 cout << (std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9) <<',' ;
                 cout << media_heuristica << ',';
                 cout << heuristica_inicial << endl;
@@ -463,7 +463,7 @@ int main(int argc, char *argv[])
                 astar16(ini_state);
                 //resultado = std::chrono::high_resolution_clock::now() - inicio;
                 cout << nos_expandidos << ',';
-                cout << comprimento_solução << ',';
+                cout << comprimento_solucao << ',';
                 cout << (std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9) <<',' ;
                 cout << media_heuristica << ',';
                 cout << heuristica_inicial << endl;
@@ -477,7 +477,7 @@ int main(int argc, char *argv[])
         	idastar(inputs[i]);
             //resultado = std::chrono::high_resolution_clock::now() - inicio;
          	cout << nos_expandidos << ',';
-         	cout << comprimento_solução << ',';
+         	cout << comprimento_solucao << ',';
             cout << (std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9) <<',' ;
          	cout << media_heuristica << ',';
          	cout << heuristica_inicial << endl;
@@ -490,7 +490,7 @@ int main(int argc, char *argv[])
             idfs(inputs[i]);
             //resultado = std::chrono::high_resolution_clock::now() - inicio;
             cout << nos_expandidos << ',';
-            cout << comprimento_solução << ',';
+            cout << comprimento_solucao << ',';
             cout << (std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9) <<',' ;
             cout << media_heuristica << ',';
             cout << heuristica_inicial << endl;
@@ -504,8 +504,8 @@ int main(int argc, char *argv[])
             gbfs(inputs[i]);
             //resultado = std::chrono::high_resolution_clock::now() - inicio;
             cout << nos_expandidos << ',';
-            cout << comprimento_solução << ',';
-            cout << (std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9) <<',' ;
+            cout << comprimento_solucao << ',';
+            cout << setprecision(10) << fixed <<(std::chrono::duration_cast<std::chrono::nanoseconds>(resultado).count())/pow(10,9) <<',' ;
             cout << media_heuristica << ',';
             cout << heuristica_inicial << endl;
         }
